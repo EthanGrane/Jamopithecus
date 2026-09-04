@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbkux2c0mgdas"
-path="res://.godot/imported/PayerSprite.png-65b4ba921451f9e7eabd5dfa080d4ae6.ctex"
+uid="uid://26k0sc2c5rtg"
+path="res://.godot/imported/Walker_sprite.png-749f0602717e47e00ec1c18e862ad56f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://GAME/Player/PayerSprite.png"
-dest_files=["res://.godot/imported/PayerSprite.png-65b4ba921451f9e7eabd5dfa080d4ae6.ctex"]
+source_file="res://GAME/Walker_sprite.png"
+dest_files=["res://.godot/imported/Walker_sprite.png-749f0602717e47e00ec1c18e862ad56f.ctex"]
 
 [params]
 

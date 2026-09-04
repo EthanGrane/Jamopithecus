@@ -16,6 +16,12 @@ enum Estado {
 @export var impulso_hacia_arriba : float = 300.0  # sale un poco hacia arriba
 @export var gravedad_al_lanzar : float = 1600.0   # cuánto se curva la trayectoria
 
+@export_group("En la mano")
+@export var offset_en_mano : Vector2 = Vector2.ZERO  # desplazamiento respecto a la mano
+@export_range(-180.0, 180.0) var angulo_en_mano : float = 0.0  # en grados
+@export var balanceo_amplitud : float = 2.0   # flotación suave, 0 para quitarla
+@export var balanceo_velocidad : float = 2.0
+
 @export_group("Golpe")
 @export var tiempo_que_se_queda_clavada : float = 0.3
 @export var dano : int = 1
@@ -37,6 +43,7 @@ var estado : Estado = Estado.EN_MANO
 var velocidad : Vector2 = Vector2.ZERO
 var enemigo_clavado : Node2D = null
 var contador_clavada : float = 0.0
+var tiempo_en_mano : float = 0.0   # solo para el balanceo
 
 # Puntos del arco por el que vuela al salir despedida
 var punto_inicio : Vector2 = Vector2.ZERO
@@ -53,9 +60,7 @@ func _physics_process(delta: float) -> void:
 	match estado:
 
 		Estado.EN_MANO:
-			# La lanza se pega a la mano del jugador
-			global_position = mano.global_position
-			rotation = 0.0 if mano.mirando > 0 else PI
+			estar_en_la_mano(delta)
 
 		Estado.VOLANDO:
 			# La gravedad la va curvando hacia abajo
@@ -79,6 +84,27 @@ func _physics_process(delta: float) -> void:
 			# Si el jugador se acerca lo suficiente, la recoge
 			if global_position.distance_to(mano.global_position) < distancia_para_recoger:
 				estado = Estado.EN_MANO
+
+
+# Estado de reposo: la lanza sujeta, esperando a que la lancen
+func estar_en_la_mano(delta: float) -> void:
+	tiempo_en_mano += delta
+
+	# 1 mirando a la derecha, -1 a la izquierda
+	var lado := 1.0 if mano.mirando > 0 else -1.0
+
+	# El offset se voltea con el jugador
+	var offset := offset_en_mano
+	offset.x *= lado
+
+	# Flotación suave para que no se vea completamente muerta
+	offset.y += sin(tiempo_en_mano * balanceo_velocidad) * balanceo_amplitud
+
+	global_position = mano.global_position + offset
+
+	# El ángulo también se refleja: PI - angulo es su espejo
+	var angulo := deg_to_rad(angulo_en_mano)
+	rotation = angulo if lado > 0 else PI - angulo
 
 
 # El PlayerThrowAttack llama a esta función al pulsar el botón
