@@ -102,7 +102,7 @@ func mover_en_horizontal(delta: float) -> void:
 	var frena = frenada_suelo if is_on_floor() else frenada_aire
 	if velocity.x > 0.0:
 		$Sprite2D.flip_h = true
-	else:
+	elif velocity.x < 0.0:
 		$Sprite2D.flip_h = false
 	if direccion != 0.0:
 		velocity.x = move_toward(velocity.x, direccion * velocidad, acelera * delta)
