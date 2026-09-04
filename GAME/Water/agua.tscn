@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://fbjgye8ct80e"]
+
+[ext_resource type="Shader" uid="uid://bjmkn2qgnnun3" path="res://GAME/Water/agua.gdshader" id="1_agua"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_agua"]
+shader = ExtResource("1_agua")
+shader_parameter/color_agua = Color(0.35, 0.55, 0.62, 1)
+shader_parameter/color_linea = Color(0.6, 0.75, 0.8, 1)
+shader_parameter/opacidad = 0.7
+shader_parameter/amplitud = 0.02
+shader_parameter/velocidad = 1.0
+shader_parameter/distorsion = 0.004
+shader_parameter/grosor_linea = 0.02000000095
+
+[node name="Agua" type="ColorRect" unique_id=875838277]
+z_index = -1
+material = SubResource("ShaderMaterial_agua")
+offset_right = 400.0
+offset_bottom = 200.0
+mouse_filter = 2
