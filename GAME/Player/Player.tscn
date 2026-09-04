@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://k005808lh4vg"]
 
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_0o37q"]
 [ext_resource type="Script" uid="uid://clp3qxlac6cg6" path="res://GAME/Player/Player_movement.gd" id="1_28m6o"]
-[ext_resource type="Texture2D" uid="uid://cbkux2c0mgdas" path="res://GAME/Player/PayerSprite.png" id="2_1vd7g"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
 radius = 32.140316
@@ -23,13 +23,13 @@ func _process(delta: float) -> void:
 [sub_resource type="CircleShape2D" id="CircleShape2D_spnxy"]
 radius = 34.234486
 
-[node name="Player" type="CharacterBody2D" unique_id=1289701118]
+[node name="Mosca" type="CharacterBody2D" unique_id=1289701118]
 script = ExtResource("1_28m6o")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1369329033]
 position = Vector2(-1.0000038, 3.8146973e-06)
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("2_1vd7g")
+scale = Vector2(0.4921875, 0.4921875)
+texture = ExtResource("1_0o37q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1690552972]
 shape = SubResource("CircleShape2D_5sv2w")
