@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://k005808lh4vg"]
 
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_0o37q"]
-[ext_resource type="Script" uid="uid://clp3qxlac6cg6" path="res://GAME/Player/mosca.gd" id="1_28m6o"]
+[ext_resource type="Script" uid="uid://clp3qxlac6cg6" path="res://GAME/Player/Player_movement.gd" id="1_28m6o"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
 radius = 32.140316

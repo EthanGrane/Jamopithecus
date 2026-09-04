@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bk1cy1mfk6sa4"]
 
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_7vw07"]
-[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/mosca.tscn" id="2_cd2k1"]
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_p8y83"]
+[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="2_ke4op"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
 size = Vector2(441, 33)
@@ -11,9 +11,9 @@ size = Vector2(441, 33)
 [node name="Icon" type="Sprite2D" parent="." unique_id=817262625]
 position = Vector2(373, 333.5)
 scale = Vector2(3.484375, 0.2890625)
-texture = ExtResource("1_7vw07")
+texture = ExtResource("1_p8y83")
 
-[node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("2_cd2k1")]
+[node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("2_ke4op")]
 position = Vector2(365, 32)
 jump_height = 4.665
 jump_time_to_peak = 0.83
