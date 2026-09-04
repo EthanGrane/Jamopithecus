@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bk1cy1mfk6sa4"]
 
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_7vw07"]
-[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://mosca.tscn" id="2_cd2k1"]
+[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/mosca.tscn" id="2_cd2k1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
 size = Vector2(441, 33)
