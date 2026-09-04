@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://k005808lh4vg"]
 
 [ext_resource type="Script" uid="uid://clp3qxlac6cg6" path="res://GAME/Player/Player_movement.gd" id="1_28m6o"]
-[ext_resource type="Texture2D" uid="uid://cbkux2c0mgdas" path="res://GAME/Player/PayerSprite.png" id="2_1vd7g"]
+[ext_resource type="Texture2D" uid="uid://26k0sc2c5rtg" path="res://GAME/Walker_sprite.png" id="2_doe5u"]
 [ext_resource type="Script" uid="uid://brt4tbjrd43wy" path="res://GAME/Player/PlayerAttack/player_throw_attack.gd" id="3_throw"]
 [ext_resource type="PackedScene" uid="uid://dkp3ldn8c3h6x" path="res://GAME/Player/PlayerAttack/spear.tscn" id="4_spear"]
 
@@ -27,16 +27,14 @@ radius = 34.234486
 
 [node name="Mosca" type="CharacterBody2D" unique_id=1289701118]
 script = ExtResource("1_28m6o")
-jump_height = null
-jump_time_to_peak = null
-jump_time_to_descent = null
-jump_cut_multiplayer = null
-speed = null
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1369329033]
+texture_filter = 1
 position = Vector2(-1.0000038, 3.8146973e-06)
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("2_1vd7g")
+scale = Vector2(1.8518522, 1.8518522)
+texture = ExtResource("2_doe5u")
+region_enabled = true
+region_rect = Rect2(28, 28, 27, 33)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1690552972]
 position = Vector2(0, 24)
