@@ -1,0 +1,92 @@
+[gd_scene format=3 uid="uid://c5xpn8xpfnf04"]
+
+[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="1_f601p"]
+[ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="2_g8y50"]
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_ukath"]
+
+[sub_resource type="Gradient" id="Gradient_wx5cp"]
+offsets = PackedFloat32Array(0.39628482)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_03g7r"]
+gradient = SubResource("Gradient_wx5cp")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iiklh"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_iiklh"]
+radius = 21.0
+height = 70.0
+
+[node name="PlayerAttackScene" type="Node2D" unique_id=319089502]
+
+[node name="_Env" type="Node2D" parent="." unique_id=2105779809]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="_Env" unique_id=842196241]
+position = Vector2(681, 597)
+scale = Vector2(1504.7404, 12.876906)
+
+[node name="Sprite2D" type="Sprite2D" parent="_Env/StaticBody2D" unique_id=405906158]
+position = Vector2(-9.536743e-07, -9.536743e-07)
+scale = Vector2(0.31249997, 0.31249997)
+texture = SubResource("GradientTexture2D_03g7r")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="_Env/StaticBody2D" unique_id=1971886650]
+shape = SubResource("RectangleShape2D_iiklh")
+
+[node name="StaticBody2D2" type="StaticBody2D" parent="_Env" unique_id=1853217093]
+position = Vector2(445, 349)
+scale = Vector2(5, 2)
+
+[node name="Sprite2D" type="Sprite2D" parent="_Env/StaticBody2D2" unique_id=937926905]
+position = Vector2(-9.536743e-07, -9.536743e-07)
+scale = Vector2(0.31249997, 0.31249997)
+texture = SubResource("GradientTexture2D_03g7r")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="_Env/StaticBody2D2" unique_id=1308559408]
+shape = SubResource("RectangleShape2D_iiklh")
+
+[node name="StaticBody2D3" type="StaticBody2D" parent="_Env" unique_id=344096002]
+position = Vector2(1030, 349)
+scale = Vector2(5, 2)
+
+[node name="Sprite2D" type="Sprite2D" parent="_Env/StaticBody2D3" unique_id=1787267386]
+position = Vector2(-9.536743e-07, -9.536743e-07)
+scale = Vector2(0.31249997, 0.31249997)
+texture = SubResource("GradientTexture2D_03g7r")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="_Env/StaticBody2D3" unique_id=1684194730]
+shape = SubResource("RectangleShape2D_iiklh")
+
+[node name="Player" parent="." unique_id=64322916 instance=ExtResource("1_f601p")]
+position = Vector2(76, 343)
+jump_height = 4.665
+jump_time_to_peak = 0.83
+jump_time_to_descent = 0.575
+
+[node name="Enemy" type="CharacterBody2D" parent="." unique_id=1463729196]
+position = Vector2(627, 429)
+
+[node name="Sprite2D" type="Sprite2D" parent="Enemy" unique_id=1105109136]
+position = Vector2(0, 2)
+scale = Vector2(0.32, 0.5599951)
+texture = ExtResource("2_ukath")
+
+[node name="HealthComponent" parent="Enemy" unique_id=654470910 instance=ExtResource("2_g8y50")]
+max_health = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy" unique_id=599370331]
+shape = SubResource("CapsuleShape2D_iiklh")
+
+[node name="_SpearDropPoints" type="Node2D" parent="." unique_id=2061767067]
+
+[node name="Marker2D" type="Marker2D" parent="_SpearDropPoints" unique_id=2109243119 groups=["spear_points"]]
+position = Vector2(279, 449)
+
+[node name="Marker2D2" type="Marker2D" parent="_SpearDropPoints" unique_id=1315638120 groups=["spear_points"]]
+position = Vector2(1028, 306)
+
+[node name="Marker2D3" type="Marker2D" parent="_SpearDropPoints" unique_id=459146002 groups=["spear_points"]]
+position = Vector2(820, 447)
+
+[node name="Marker2D4" type="Marker2D" parent="_SpearDropPoints" unique_id=393164856 groups=["spear_points"]]
+position = Vector2(441, 306)

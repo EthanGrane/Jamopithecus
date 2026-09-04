@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://k005808lh4vg"]
 
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_0o37q"]
 [ext_resource type="Script" uid="uid://clp3qxlac6cg6" path="res://GAME/Player/Player_movement.gd" id="1_28m6o"]
+[ext_resource type="Texture2D" uid="uid://cbkux2c0mgdas" path="res://GAME/Player/PayerSprite.png" id="2_1vd7g"]
+[ext_resource type="Script" uid="uid://brt4tbjrd43wy" path="res://GAME/Player/PlayerAttack/player_throw_attack.gd" id="3_throw"]
+[ext_resource type="PackedScene" uid="uid://dkp3ldn8c3h6x" path="res://GAME/Player/PlayerAttack/spear.tscn" id="4_spear"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
 radius = 32.140316
@@ -28,8 +30,8 @@ script = ExtResource("1_28m6o")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1369329033]
 position = Vector2(-1.0000038, 3.8146973e-06)
-scale = Vector2(0.4921875, 0.4921875)
-texture = ExtResource("1_0o37q")
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_1vd7g")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1690552972]
 shape = SubResource("CircleShape2D_5sv2w")
@@ -39,5 +41,10 @@ script = SubResource("GDScript_ixk36")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1076696802]
 shape = SubResource("CircleShape2D_spnxy")
+
+[node name="PlayerThrowAttack" type="Node2D" parent="." unique_id=632036318]
+position = Vector2(40, 0)
+script = ExtResource("3_throw")
+spear_scene = ExtResource("4_spear")
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
