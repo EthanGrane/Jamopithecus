@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c5xpn8xpfnf04"]
 
 [ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="1_f601p"]
+[ext_resource type="PackedScene" uid="uid://fbjgye8ct80e" path="res://GAME/Water/agua.tscn" id="1_guhy4"]
 [ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="2_g8y50"]
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_ukath"]
 
@@ -18,6 +19,13 @@ radius = 21.0
 height = 70.0
 
 [node name="PlayerAttackScene" type="Node2D" unique_id=319089502]
+
+[node name="Agua" parent="." unique_id=875838277 instance=ExtResource("1_guhy4")]
+z_index = 1
+offset_left = -10.0
+offset_top = 491.0
+offset_right = 1166.0
+offset_bottom = 691.0
 
 [node name="_Env" type="Node2D" parent="." unique_id=2105779809]
 
@@ -72,7 +80,6 @@ scale = Vector2(0.32, 0.5599951)
 texture = ExtResource("2_ukath")
 
 [node name="HealthComponent" parent="Enemy" unique_id=654470910 instance=ExtResource("2_g8y50")]
-max_health = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Enemy" unique_id=599370331]
 shape = SubResource("CapsuleShape2D_iiklh")

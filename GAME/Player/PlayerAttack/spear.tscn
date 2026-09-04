@@ -1,21 +1,29 @@
 [gd_scene format=3 uid="uid://dkp3ldn8c3h6x"]
 
 [ext_resource type="Script" uid="uid://2r3qbobueclh" path="res://GAME/Player/PlayerAttack/spear.gd" id="1_spear"]
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://26k0sc2c5rtg" path="res://GAME/Walker_sprite.png" id="2_ppbye"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_spear"]
-radius = 6.0
+radius = 4.1231055
 
 [node name="Spear" type="Area2D" unique_id=748100319]
+scale = Vector2(2, 2)
 script = ExtResource("1_spear")
 gravedad_al_lanzar = 1200.0
+offset_en_mano = Vector2(-9, -3)
+angulo_en_mano = -60.0
+balanceo_amplitud = 0.5
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1586144245]
-scale = Vector2(0.5, 0.05)
-texture = ExtResource("2_icon")
+texture_filter = 1
+rotation = 1.5707964
+scale = Vector2(1, 1.0537491)
+texture = ExtResource("2_ppbye")
+region_enabled = true
+region_rect = Rect2(64, 27, 10, 34)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=366523819]
-position = Vector2(28, 0)
+position = Vector2(13, 0)
 shape = SubResource("CircleShape2D_spear")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

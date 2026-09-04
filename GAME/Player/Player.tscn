@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://k005808lh4vg"]
 
 [ext_resource type="Script" uid="uid://clp3qxlac6cg6" path="res://GAME/Player/Player_movement.gd" id="1_28m6o"]
-[ext_resource type="Texture2D" uid="uid://cbkux2c0mgdas" path="res://GAME/Player/PayerSprite.png" id="2_1vd7g"]
+[ext_resource type="Texture2D" uid="uid://26k0sc2c5rtg" path="res://GAME/Walker_sprite.png" id="2_doe5u"]
 [ext_resource type="Script" uid="uid://brt4tbjrd43wy" path="res://GAME/Player/PlayerAttack/player_throw_attack.gd" id="3_throw"]
 [ext_resource type="PackedScene" uid="uid://dkp3ldn8c3h6x" path="res://GAME/Player/PlayerAttack/spear.tscn" id="4_spear"]
 
@@ -22,25 +22,35 @@ func _process(delta: float) -> void:
 	pass
 "
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_spnxy"]
-radius = 34.234486
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_f4d4c"]
+height = 56.0
 
 [node name="Mosca" type="CharacterBody2D" unique_id=1289701118]
 script = ExtResource("1_28m6o")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1369329033]
-position = Vector2(-1.0000038, 3.8146973e-06)
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("2_1vd7g")
+texture_filter = 1
+texture_repeat = 1
+scale = Vector2(1.7777781, 1.7777779)
+texture = ExtResource("2_doe5u")
+flip_h = true
+region_enabled = true
+region_rect = Rect2(28, 28, 27, 34)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1690552972]
+<<<<<<< Updated upstream
+=======
+position = Vector2(0, 20)
+>>>>>>> Stashed changes
 shape = SubResource("CircleShape2D_5sv2w")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=84995048]
+visible = false
 script = SubResource("GDScript_ixk36")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1076696802]
-shape = SubResource("CircleShape2D_spnxy")
+position = Vector2(-1, -2)
+shape = SubResource("CapsuleShape2D_f4d4c")
 
 [node name="PlayerThrowAttack" type="Node2D" parent="." unique_id=632036318]
 position = Vector2(40, 0)
