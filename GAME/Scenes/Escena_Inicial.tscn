@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cbm4yu3yytgal"]
+
+[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="1_0x034"]
+
+[node name="EscenaInicial" type="Node2D" unique_id=1232146653]
+
+[node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("1_0x034")]
+position = Vector2(24, -39)

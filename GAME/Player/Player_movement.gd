@@ -1,61 +1,111 @@
 extends CharacterBody2D
 
-@export var jump_height : float= 0.0
-@export var jump_time_to_peak : float= 0.0
-@export var jump_time_to_descent :float = 0.0
-@export var jump_cut_multiplayer := 0.2
-@export var speed := 400
-@onready var jump_speed : float = calculate_jump_speed(jump_height, jump_time_to_peak)
-@onready var jump_gravity : float = calculate_jump_gravity(jump_height, jump_time_to_peak)
-@onready var fall_gravity : float = calculate_fall_gravity(jump_height, jump_time_to_descent)
+@export_group("Movimiento")
+@export var velocidad : float = 400.0
+@export var aceleracion_suelo : float = 6000.0
+@export var frenada_suelo : float = 6000.0
+@export var aceleracion_aire : float = 3500.0
+@export var frenada_aire : float = 1200.0
 
-const COYOTE_TIME := 0.2
-const JUMP_VELOCITY = -400.0
-var coyote_timer : float
-var n_jumps := 0
+@export_group("Salto")
+@export var altura_salto : float = 160.0        # en píxeles, lo que sube de verdad
+@export var tiempo_de_subida : float = 0.38     # segundos hasta el punto más alto
+@export var tiempo_de_bajada : float = 0.30     # baja más rápido de lo que sube
+@export var saltos_maximos : int = 1            # ponlo a 2 para doble salto
+@export_range(0.0, 1.0) var corte_de_salto : float = 0.45  # al soltar, se queda con este % de subida
+@export var velocidad_maxima_de_caida : float = 1400.0
+
+@export_group("Ayudas al jugador")
+@export var coyote_time : float = 0.10          # saltar justo después de salir del borde
+@export var buffer_de_salto : float = 0.12      # pulsar justo antes de aterrizar
+@export_range(0.0, 1.0) var gravedad_en_el_pico : float = 0.55  # flota un pelín arriba
+@export var margen_del_pico : float = 120.0     # a qué velocidad se considera "el pico"
+
+# Estos tres se calculan solos a partir de la altura y los tiempos de arriba.
+# Así tú piensas en "quiero saltar 160px en 0.38s" y no en números de gravedad.
+@onready var velocidad_salto : float = -2.0 * altura_salto / tiempo_de_subida
+@onready var gravedad_subiendo : float = 2.0 * altura_salto / pow(tiempo_de_subida, 2.0)
+@onready var gravedad_cayendo : float = 2.0 * altura_salto / pow(tiempo_de_bajada, 2.0)
+
+var saltos_dados : int = 0
+var coyote_restante : float = 0.0
+var buffer_restante : float = 0.0
 
 
 func _physics_process(delta: float) -> void:
-	velocity.y += to_get_gravity() * delta
-	
-	if Input.is_action_just_pressed("Salto") and coyote_timer > 0.0 and n_jumps == 0 and velocity.y > 10:
-		jump()
-		n_jumps += 1
-		
-	if Input.is_action_just_released("Salto") and not is_on_floor():
-		velocity.y *= jump_cut_multiplayer
-		
-	if is_on_floor():
-		n_jumps = 0
-		coyote_timer = COYOTE_TIME
-	else:
-		coyote_timer -= delta
-		
-	var direction := signf(Input.get_axis("Left","Right"))
-	if direction:
-		velocity.x = direction * speed
-	else:
-		velocity.x = move_toward(velocity.x, 0, speed)
-
+	actualizar_ayudas(delta)
+	gestionar_salto()
+	aplicar_gravedad(delta)
+	mover_en_horizontal(delta)
 	move_and_slide()
 
-func calculate_jump_speed(height: float, time_to_peak: float) -> float:
-	return -(2.0 * height / time_to_peak)
 
-func calculate_jump_gravity(height: float, time_to_peak: float) -> float:
-	return (2.0 * height) / pow(time_to_peak, 2.0)
+# Coyote time y buffer: los dos trucos que hacen que un salto
+# se sienta justo en vez de tramposo
+func actualizar_ayudas(delta: float) -> void:
+	if is_on_floor():
+		coyote_restante = coyote_time
+		saltos_dados = 0
+	else:
+		coyote_restante -= delta
+		# Si se le acabó el coyote sin saltar, ese salto ya lo ha perdido
+		if coyote_restante <= 0.0 and saltos_dados == 0:
+			saltos_dados = 1
 
-func calculate_fall_gravity(height: float, time_to_descent: float) -> float:
-	return (2.0 * height) / pow(time_to_descent, 2.0)
-
-func to_get_gravity() -> float:
-	if velocity.y < 0.0:
-		return jump_gravity
-	return fall_gravity
+	# Guardamos la pulsación un ratito por si la ha hecho antes de aterrizar
+	if Input.is_action_just_pressed("Salto"):
+		buffer_restante = buffer_de_salto
+	else:
+		buffer_restante -= delta
 
 
-func jump() -> void:
-	velocity.y = jump_speed
+func gestionar_salto() -> void:
+	if buffer_restante > 0.0 and saltos_dados < saltos_maximos:
+		saltar()
+
+	# Salto de altura variable: si sueltas mientras subes, se corta
+	if Input.is_action_just_released("Salto") and velocity.y < 0.0:
+		velocity.y *= corte_de_salto
+
+
+func saltar() -> void:
+	velocity.y = velocidad_salto
+	saltos_dados += 1
+	coyote_restante = 0.0
+	buffer_restante = 0.0
+
+
+func aplicar_gravedad(delta: float) -> void:
+	# OJO: multiplicar por delta. Sin esto la gravedad depende
+	# de los FPS y el salto se siente distinto en cada ordenador
+	velocity.y += gravedad_actual() * delta
+	velocity.y = minf(velocity.y, velocidad_maxima_de_caida)
+
+
+func gravedad_actual() -> float:
+	# Cae más rápido de lo que sube: es lo que hace que el salto
+	# se sienta con peso en vez de flotar
+	var g = gravedad_subiendo if velocity.y < 0.0 else gravedad_cayendo
+
+	# En lo más alto del salto la gravedad baja un poco. Es casi invisible
+	# pero da ese momento de control en el aire tipo Hollow Knight
+	if absf(velocity.y) < margen_del_pico:
+		g *= gravedad_en_el_pico
+
+	return g
+
+
+func mover_en_horizontal(delta: float) -> void:
+	var direccion := Input.get_axis("Left", "Right")
+
+	var acelera = aceleracion_suelo if is_on_floor() else aceleracion_aire
+	var frena = frenada_suelo if is_on_floor() else frenada_aire
+
+	if direccion != 0.0:
+		velocity.x = move_toward(velocity.x, direccion * velocidad, acelera * delta)
+	else:
+		velocity.x = move_toward(velocity.x, 0.0, frena * delta)
+
 
 func _on_area_2d_area_entered(area: Area2D) -> void:
 	if area.is_in_group("enemy"):

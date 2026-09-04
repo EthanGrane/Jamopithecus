@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dkp3ldn8c3h6x" path="res://GAME/Player/PlayerAttack/spear.tscn" id="4_spear"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
-radius = 32.140316
+radius = 9.0
 
 [sub_resource type="GDScript" id="GDScript_ixk36"]
 script/source = "extends Area2D
@@ -39,6 +39,7 @@ scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_1vd7g")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1690552972]
+position = Vector2(0, 24)
 shape = SubResource("CircleShape2D_5sv2w")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=84995048]
