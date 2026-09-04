@@ -3,29 +3,35 @@ extends CharacterBody2D
 @export var jump_height : float= 0.0
 @export var jump_time_to_peak : float= 0.0
 @export var jump_time_to_descent :float = 0.0
-@export var jump_cut_multiplayer := 0.4
+@export var jump_cut_multiplayer := 0.2
+@export var speed := 400
 @onready var jump_speed : float = calculate_jump_speed(jump_height, jump_time_to_peak)
 @onready var jump_gravity : float = calculate_jump_gravity(jump_height, jump_time_to_peak)
 @onready var fall_gravity : float = calculate_fall_gravity(jump_height, jump_time_to_descent)
 
-const coyote_jump := 0.1
-const SPEED = 300.0
+const COYOTE_TIME := 0.2
 const JUMP_VELOCITY = -400.0
-
-
+var coyote_timer : float
+var n_jumps := 0
 
 
 func _physics_process(delta: float) -> void:
 	velocity.y += to_get_gravity()
-	if Input.is_action_just_pressed("Salto") and is_on_floor():
+	if Input.is_action_pressed("Salto") and coyote_timer > 0.0 and n_jumps == 0:
 		velocity.y = JUMP_VELOCITY
+		n_jumps += 1
 	if Input.is_action_just_released("Salto") and not is_on_floor():
 		velocity.y *= jump_cut_multiplayer
+	if is_on_floor():
+		n_jumps = 0
+		coyote_timer = COYOTE_TIME
+	else:
+		coyote_timer -= delta
 	var direction := signf(Input.get_axis("Left","Right"))
 	if direction:
-		velocity.x = direction * SPEED
+		velocity.x = direction * speed
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.x = move_toward(velocity.x, 0, speed)
 
 	move_and_slide()
 
