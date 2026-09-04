@@ -59,9 +59,11 @@ shape = SubResource("RectangleShape2D_iiklh")
 
 [node name="Player" parent="." unique_id=64322916 instance=ExtResource("1_f601p")]
 position = Vector2(76, 343)
-jump_height = 4.665
-jump_time_to_peak = 0.83
-jump_time_to_descent = 0.575
+jump_height = 150.0
+jump_time_to_peak = 0.35
+jump_time_to_descent = 0.25
+jump_cut_multiplayer = 0.5
+speed = 400
 
 [node name="Enemy" type="CharacterBody2D" parent="." unique_id=1463729196]
 position = Vector2(627, 429)
