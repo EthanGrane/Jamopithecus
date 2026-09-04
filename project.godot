@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Jamopithecus"
+run/main_scene="uid://bk1cy1mfk6sa4"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
