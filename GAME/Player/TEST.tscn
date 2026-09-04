@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_p8y83"]
 [ext_resource type="PackedScene" uid="uid://e7ibnnthjk0k" path="res://GAME/Boss1/boos_1.tscn" id="2_p8y83"]
 [ext_resource type="PackedScene" uid="uid://bj6ortxtfsb0q" path="res://GAME/Boss1/pipe.tscn" id="3_ke4op"]
+[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="4_7h650"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
 size = Vector2(1180.5, 21.5)
@@ -45,3 +46,6 @@ area_position = Vector2(250, 0)
 position = Vector2(763, 493)
 pipe_n = 4
 area_position = Vector2(250, 0)
+
+[node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("4_7h650")]
+position = Vector2(570, 506)
