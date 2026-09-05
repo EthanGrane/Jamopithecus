@@ -4,7 +4,7 @@ enum state {movement, damage}
 var current_state : state = state.movement
 var max_velocity := 600.0
 var current_velocity : float
-var timer = 10.0
+var timer = 3.0
 var rotate_velocity := 10.0
 var last_pipe = 0
 var tp_to_position : Vector2
