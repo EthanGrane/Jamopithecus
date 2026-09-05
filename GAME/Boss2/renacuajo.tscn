@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://ch6ehihn3ebbx"]
+
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_banr1"]
+[ext_resource type="Script" uid="uid://co8ndyj3u4gbg" path="res://GAME/Boss2/renacuajo.gd" id="1_norkw"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
+radius = 36.05551
+
+[node name="StaticBody2D" type="StaticBody2D" unique_id=1623018016]
+script = ExtResource("1_norkw")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2122703804]
+position = Vector2(0.1250031, -1.1250031)
+scale = Vector2(0.48242193, 0.48242193)
+texture = ExtResource("1_banr1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1437101401]
+shape = SubResource("CircleShape2D_5sv2w")
+
+[node name="Timer" type="Timer" parent="." unique_id=185760883]
+wait_time = 7.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
