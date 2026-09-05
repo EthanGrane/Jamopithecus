@@ -1,4 +1,4 @@
-class_name Spear extends Area2D
+extends Area2D
 
 # Los estados posibles de la lanza.
 # Un enum es una lista de nombres que Godot convierte en números por dentro,
@@ -35,6 +35,14 @@ enum Estado {
 @export var altura_del_arco : float = 200.0
 @export var vueltas : float = 1.0            # cuántas vueltas da en el aire
 @export var duracion_colocarse : float = 0.2 # el "se coloca" del final
+
+@export_group("Sonidos")
+@export var sonido_lanzar : AudioStream = preload("res://GAME/SFX/SpearThrowWoosh.wav")
+@export var sonido_superficie : AudioStream = preload("res://GAME/SFX/HitSurface.wav")
+@export_range(-40.0, 12.0) var volumen_lanzar : float = 0.0
+@export_range(-40.0, 12.0) var volumen_superficie : float = 0.0
+@export var tono_min : float = 0.94   # variación de tono para que no suene a copia
+@export var tono_max : float = 1.06
 
 # El PlayerThrowAttack se asigna solo aquí al crear la lanza
 var mano : Node2D = null
@@ -114,6 +122,8 @@ func lanzar(direccion: Vector2) -> void:
 	rotation = velocidad.angle()
 	estado = Estado.VOLANDO
 
+	GameFeel.sonar(sonido_lanzar, global_position, volumen_lanzar, tono_min, tono_max)
+
 
 # Se ejecuta cuando la lanza toca algo (señal body_entered)
 func _on_body_entered(body: Node2D) -> void:
@@ -129,7 +139,6 @@ func _on_body_entered(body: Node2D) -> void:
 	var health_component = body.get_node_or_null("HealthComponent")
 
 	if health_component:
-		print("ocurre")
 		health_component.take_damage(dano)
 		enemigo_clavado = body
 		contador_clavada = tiempo_que_se_queda_clavada
@@ -139,6 +148,7 @@ func _on_body_entered(body: Node2D) -> void:
 		# en el ángulo con el que llegó, como una lanza de verdad
 		velocidad = Vector2.ZERO
 		estado = Estado.EN_SUELO
+		sonar_superficie()
 
 
 # ---------------------------------------------------------------
@@ -194,6 +204,12 @@ func _mover_por_el_arco(t: float) -> void:
 func _al_aterrizar() -> void:
 	rotation = 0.0
 	estado = Estado.EN_SUELO
+	sonar_superficie()
+
+
+# Suena cuando la lanza se clava en algo que no es un enemigo
+func sonar_superficie() -> void:
+	GameFeel.sonar(sonido_superficie, global_position, volumen_superficie, tono_min, tono_max)
 
 
 func elegir_punto_aleatorio() -> Vector2:
