@@ -12,7 +12,10 @@
 [ext_resource type="Texture2D" uid="uid://cifk10n1hpjfq" path="res://GAME/Player/Sprites/idle/Walker_Idle4.png" id="5_kjwcm"]
 [ext_resource type="Texture2D" uid="uid://o8b22t0cm47h" path="res://GAME/Player/Sprites/Walk/Walker_Walk4.png" id="5_u0eer"]
 [ext_resource type="Texture2D" uid="uid://bn3fv6edikp87" path="res://GAME/Player/Sprites/idle/Walker_Idle5.png" id="6_43i7g"]
+[ext_resource type="Texture2D" uid="uid://biu02q0p4slup" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump6.png" id="6_t21g8"]
 [ext_resource type="Texture2D" uid="uid://da72o5ilol0cx" path="res://GAME/Player/Sprites/idle/Walker_Idle6.png" id="7_fo13t"]
+[ext_resource type="Texture2D" uid="uid://bq8shysaj4qwn" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump7.png" id="7_j322u"]
+[ext_resource type="Texture2D" uid="uid://c7fgmai4mldha" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump8.png" id="8_okoi8"]
 [ext_resource type="Texture2D" uid="uid://d4hu5vphp581l" path="res://GAME/Player/Sprites/idle/Walker_Idle7.png" id="8_vgnh7"]
 [ext_resource type="Texture2D" uid="uid://mn1mwlh78byv" path="res://GAME/Player/Sprites/idle/Walker_Idle8.png" id="9_u0eer"]
 [ext_resource type="Texture2D" uid="uid://dtefh0bmy6ttj" path="res://GAME/Player/Sprites/idle/Walker_Idle24.png" id="10_ogd5h"]
@@ -31,6 +34,17 @@
 [ext_resource type="Texture2D" uid="uid://c5i0y51f7fbw" path="res://GAME/Player/Sprites/idle/Walker_Idle21.png" id="23_5qeys"]
 [ext_resource type="Texture2D" uid="uid://cmc7b6qtymlvj" path="res://GAME/Player/Sprites/idle/Walker_Idle22.png" id="24_ue1ef"]
 [ext_resource type="Texture2D" uid="uid://kt0hnhbjdlq4" path="res://GAME/Player/Sprites/idle/Walker_Idle23.png" id="25_uu0i0"]
+[ext_resource type="Texture2D" uid="uid://cbkdnkvmunh1j" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump1.png" id="33_5qeys"]
+[ext_resource type="Texture2D" uid="uid://dge5s1b558h2f" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump2.png" id="34_ue1ef"]
+[ext_resource type="Texture2D" uid="uid://basugj82patpm" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump3.png" id="35_uu0i0"]
+[ext_resource type="Texture2D" uid="uid://pdhdl6exvm5x" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump4.png" id="36_0avy1"]
+[ext_resource type="Texture2D" uid="uid://o21ei3o4703" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump5.png" id="37_chutw"]
+[ext_resource type="Texture2D" uid="uid://bowyp55loqxw4" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump9.png" id="38_ydl46"]
+[ext_resource type="Texture2D" uid="uid://bdh68lm7kibe6" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump10.png" id="39_ut138"]
+[ext_resource type="Texture2D" uid="uid://8aouvi3cfs0d" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump11.png" id="40_ub56y"]
+[ext_resource type="Texture2D" uid="uid://dcr50xsttfx73" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump12.png" id="41_ialbx"]
+[ext_resource type="Texture2D" uid="uid://df2oeb21ah1ok" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump13.png" id="42_vmdan"]
+[ext_resource type="Texture2D" uid="uid://cdh70he52wajm" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump14.png" id="43_pjcmj"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_5sv2w"]
 animations = [{
@@ -50,6 +64,20 @@ animations = [{
 "loop": 1,
 "name": &"Walk",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_t21g8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_j322u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_okoi8")
+}],
+"loop": 1,
+"name": &"down_jump",
+"speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -127,6 +155,57 @@ animations = [{
 "loop": 1,
 "name": &"idle",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("33_5qeys")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_ue1ef")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_uu0i0")
+}],
+"loop": 1,
+"name": &"jump",
+"speed": 60.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("38_ydl46")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_ut138")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_ub56y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_ialbx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_vmdan")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_pjcmj")
+}],
+"loop": 1,
+"name": &"touch_floor",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("35_uu0i0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_0avy1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_chutw")
+}],
+"loop": 1,
+"name": &"up_jump",
+"speed": 5.0
 }]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
@@ -157,9 +236,7 @@ texture_filter = 1
 position = Vector2(-1.0000038, 3.8146973e-06)
 scale = Vector2(1.8518522, 1.8518522)
 sprite_frames = SubResource("SpriteFrames_5sv2w")
-animation = &"Walk"
-frame = 2
-frame_progress = 0.29178596
+animation = &"jump"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1690552972]
 position = Vector2(0, 24)

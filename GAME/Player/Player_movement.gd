@@ -41,6 +41,7 @@ func _physics_process(delta: float) -> void:
 	gestionar_salto()
 	aplicar_gravedad(delta)
 	mover_en_horizontal(delta)
+	player_animation()
 	move_and_slide()
 
 
@@ -73,6 +74,8 @@ func gestionar_salto() -> void:
 
 
 func saltar() -> void:
+	$Sprite2D.play("jump")
+	await get_tree().create_timer(0.01).timeout
 	velocity.y = velocidad_salto
 	saltos_dados += 1
 	coyote_restante = 0.0
@@ -104,20 +107,26 @@ func mover_en_horizontal(delta: float) -> void:
 		direccion = Input.get_axis("Left", "Right")
 	var acelera = aceleracion_suelo if is_on_floor() else aceleracion_aire
 	var frena = frenada_suelo if is_on_floor() else frenada_aire
-	if velocity.x != 0.0:
-		$Sprite2D.play("Walk")
-		if velocity.x > 0.0:
-			$Sprite2D.flip_h = true
-		elif velocity.x < 0.0:
-			$Sprite2D.flip_h = false
-	else:
-		if velocity.y == 0.0:
-			$Sprite2D.play("idle")
 	if direccion != 0.0:
 		velocity.x = move_toward(velocity.x, direccion * velocidad, acelera * delta)
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, frena * delta)
 
+func player_animation():
+	if velocity.x > 0.0:
+		$Sprite2D.flip_h = true
+	elif velocity.x < 0.0:
+		$Sprite2D.flip_h = false
+	if velocity.y > 0.0 and velocity.y < 100.0 or velocity.y < 0.0 and velocity.y > 100.0 or velocity.y == 0.0:
+		if velocity.x != 0.0:
+			$Sprite2D.play("Walk")
+		else:
+			$Sprite2D.play("idle")
+	else:
+		if velocity.y > 0.0:
+			$Sprite2D.play("up_jump")
+		else:
+			$Sprite2D.play("down_jump")
 func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("Dash") and not is_in_dash:
 		dash()
