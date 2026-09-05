@@ -15,6 +15,13 @@ class_name player extends CharacterBody2D
 @export_range(0.0, 1.0) var corte_de_salto : float = 0.45  # al soltar, se queda con este % de subida
 @export var velocidad_maxima_de_caida : float = 1400.0
 
+@export_group("Dash")
+@export var velocidad_dash : float = 900.0      # se aplica de golpe, sin acelerar
+@export var duracion_dash : float = 0.18
+@export var cooldown_dash : float = 0.35        # empieza a contar al TERMINAR el dash
+@export var dashes_en_el_aire : int = 1         # se recargan al tocar suelo
+@export var buffer_de_dash : float = 0.12
+
 @export_group("Ayudas al jugador")
 @export var coyote_time : float = 0.10          # saltar justo después de salir del borde
 @export var buffer_de_salto : float = 0.12      # pulsar justo antes de aterrizar
@@ -27,20 +34,36 @@ class_name player extends CharacterBody2D
 @onready var gravedad_subiendo : float = 2.0 * altura_salto / pow(tiempo_de_subida, 2.0)
 @onready var gravedad_cayendo : float = 2.0 * altura_salto / pow(tiempo_de_bajada, 2.0)
 
-var direccion : float
+var direccion : float = 0.0
+var mirando : float = 1.0        # 1 derecha, -1 izquierda. Para dashear parado
 var saltos_dados : int = 0
 var coyote_restante : float = 0.0
 var buffer_restante : float = 0.0
-var is_in_dash : bool = false
+
+var dasheando : bool = false
+var dash_restante : float = 0.0
+var cooldown_restante : float = 0.0
+var dashes_dados : int = 0
+var buffer_dash_restante : float = 0.0
+var direccion_dash : float = 1.0
+
 
 func _ready() -> void:
 	$Sprite2D.play("idle")
 
+
 func _physics_process(delta: float) -> void:
 	actualizar_ayudas(delta)
-	gestionar_salto()
-	aplicar_gravedad(delta)
-	mover_en_horizontal(delta)
+	actualizar_dash(delta)
+
+	if dasheando:
+		# Durante el dash: línea recta, ni gravedad ni control
+		velocity = Vector2(direccion_dash * velocidad_dash, 0.0)
+	else:
+		gestionar_salto()
+		aplicar_gravedad(delta)
+		mover_en_horizontal(delta)
+
 	player_animation()
 	move_and_slide()
 
@@ -51,6 +74,7 @@ func actualizar_ayudas(delta: float) -> void:
 	if is_on_floor():
 		coyote_restante = coyote_time
 		saltos_dados = 0
+		dashes_dados = 0      # los dashes se recargan al tocar suelo
 	else:
 		coyote_restante -= delta
 		# Si se le acabó el coyote sin saltar, ese salto ya lo ha perdido
@@ -64,6 +88,10 @@ func actualizar_ayudas(delta: float) -> void:
 		buffer_restante -= delta
 
 
+# ---------------------------------------------------------------
+#  Salto
+# ---------------------------------------------------------------
+
 func gestionar_salto() -> void:
 	if buffer_restante > 0.0 and saltos_dados < saltos_maximos:
 		saltar()
@@ -74,8 +102,8 @@ func gestionar_salto() -> void:
 
 
 func saltar() -> void:
+	# La animación se lanza y punto: nada de await, que retrasa el salto un frame
 	$Sprite2D.play("jump")
-	await get_tree().create_timer(0.01).timeout
 	velocity.y = velocidad_salto
 	saltos_dados += 1
 	coyote_restante = 0.0
@@ -103,14 +131,72 @@ func gravedad_actual() -> float:
 
 
 func mover_en_horizontal(delta: float) -> void:
-	if not is_in_dash:
-		direccion = Input.get_axis("Left", "Right")
+	direccion = Input.get_axis("Left", "Right")
+
+	if direccion != 0.0:
+		mirando = signf(direccion)
+
 	var acelera = aceleracion_suelo if is_on_floor() else aceleracion_aire
 	var frena = frenada_suelo if is_on_floor() else frenada_aire
+
 	if direccion != 0.0:
 		velocity.x = move_toward(velocity.x, direccion * velocidad, acelera * delta)
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, frena * delta)
+
+
+# ---------------------------------------------------------------
+#  Dash
+# ---------------------------------------------------------------
+
+func actualizar_dash(delta: float) -> void:
+	cooldown_restante -= delta
+
+	# Mismo truco que el salto: si pulsas un pelín antes de poder, se guarda
+	if Input.is_action_just_pressed("Dash"):
+		buffer_dash_restante = buffer_de_dash
+	else:
+		buffer_dash_restante -= delta
+
+	if dasheando:
+		dash_restante -= delta
+		if dash_restante <= 0.0:
+			terminar_dash()
+	elif buffer_dash_restante > 0.0 and puede_dashear():
+		empezar_dash()
+
+
+func puede_dashear() -> bool:
+	return cooldown_restante <= 0.0 and dashes_dados < dashes_en_el_aire
+
+
+func empezar_dash() -> void:
+	dasheando = true
+	dash_restante = duracion_dash
+	dashes_dados += 1
+	buffer_dash_restante = 0.0
+
+	# Hacia donde pulses; si no pulsas nada, hacia donde mires.
+	# Esto es lo que arregla el "dash parado no hace nada"
+	var eje := Input.get_axis("Left", "Right")
+	direccion_dash = signf(eje) if eje != 0.0 else mirando
+	mirando = direccion_dash
+
+	# Si algún día tienes animación de dash, va aquí:
+	# $Sprite2D.play("dash")
+
+
+func terminar_dash() -> void:
+	dasheando = false
+	cooldown_restante = cooldown_dash
+
+	# Sale del dash a velocidad de carrera, no a 900.
+	# Sin esto el dash se siente como un patinazo que no acaba
+	velocity.x = direccion_dash * velocidad
+	velocity.y = 0.0
+
+
+# ---------------------------------------------------------------
 
 func player_animation():
 	if velocity.x > 0.0:
@@ -127,22 +213,17 @@ func player_animation():
 			$Sprite2D.play("up_jump")
 		else:
 			$Sprite2D.play("down_jump")
+
+
 func _input(event: InputEvent) -> void:
-	if Input.is_action_just_pressed("Dash") and not is_in_dash:
-		dash()
-	if Input.is_action_just_pressed("Decoy"):
+	if event.is_action_pressed("Decoy"):
 		decoy()
 
-func dash():
-	velocidad = 800
-	is_in_dash = true
-	await get_tree().create_timer(0.3).timeout
-	print("hola")
-	velocidad = 400
-	is_in_dash = false
 
 func decoy():
 	pass
+
+
 func _on_area_2d_area_entered(area: Area2D) -> void:
 	if area.is_in_group("enemy"):
 		print("mori")

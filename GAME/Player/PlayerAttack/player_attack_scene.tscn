@@ -6,8 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_ukath"]
 
 [sub_resource type="Gradient" id="Gradient_wx5cp"]
-offsets = PackedFloat32Array(0.39628482)
-colors = PackedColorArray(1, 1, 1, 1)
+offsets = PackedFloat32Array(0.015021459)
+colors = PackedColorArray(0.2520276, 0.25202766, 0.25202763, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_03g7r"]
 gradient = SubResource("Gradient_wx5cp")
@@ -67,6 +67,8 @@ shape = SubResource("RectangleShape2D_iiklh")
 
 [node name="Player" parent="." unique_id=64322916 instance=ExtResource("1_f601p")]
 position = Vector2(76, 343)
+duracion_dash = 0.15
+cooldown_dash = 0.5
 
 [node name="Enemy" type="CharacterBody2D" parent="." unique_id=1463729196]
 position = Vector2(627, 429)
