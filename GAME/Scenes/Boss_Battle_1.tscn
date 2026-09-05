@@ -57,11 +57,9 @@ scale = Vector2(-1, 1)
 
 [node name="Pipe3" parent="." unique_id=435816854 instance=ExtResource("3_8ptxo")]
 position = Vector2(1594, 69)
-invertir_direccion = true
 
 [node name="Pipe4" parent="." unique_id=1216977234 instance=ExtResource("3_8ptxo")]
 position = Vector2(1412, 493)
-invertir_direccion = true
 
 [node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("4_788jl")]
 position = Vector2(570, 506)

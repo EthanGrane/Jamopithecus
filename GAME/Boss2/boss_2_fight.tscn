@@ -41,4 +41,15 @@ offset_bottom = 691.0
 [node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("5_cqny5")]
 position = Vector2(536, 403)
 
+[node name="Spear_marker_point" type="Node2D" parent="." unique_id=847705]
+
+[node name="Marker2D" type="Marker2D" parent="Spear_marker_point" unique_id=5936190]
+position = Vector2(211, 471)
+
+[node name="Marker2D2" type="Marker2D" parent="Spear_marker_point" unique_id=286673211]
+position = Vector2(541, 475)
+
+[node name="Marker2D3" type="Marker2D" parent="Spear_marker_point" unique_id=1615110455]
+position = Vector2(919, 483)
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

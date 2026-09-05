@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var pipes : Array[pipe]
+@export var pipes : Array[Pipe]
 @export var bubles_distances := 300.0
 @onready var burbujas := preload("res://GAME/Boss2/burbujas.tscn")
 var direction : Vector2
