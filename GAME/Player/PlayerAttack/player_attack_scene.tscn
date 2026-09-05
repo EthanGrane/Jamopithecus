@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://fbjgye8ct80e" path="res://GAME/Water/agua.tscn" id="1_guhy4"]
 [ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="2_g8y50"]
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_ukath"]
+[ext_resource type="PackedScene" path="res://GAME/Camera/camera_dolly.tscn" id="5_7jvx1"]
 
 [sub_resource type="Gradient" id="Gradient_wx5cp"]
 offsets = PackedFloat32Array(0.015021459)
@@ -22,9 +23,9 @@ height = 70.0
 
 [node name="Agua" parent="." unique_id=875838277 instance=ExtResource("1_guhy4")]
 z_index = 1
-offset_left = -10.0
+offset_left = -123.0
 offset_top = 491.0
-offset_right = 1166.0
+offset_right = 1418.0
 offset_bottom = 691.0
 
 [node name="_Env" type="Node2D" parent="." unique_id=2105779809]
@@ -96,3 +97,10 @@ position = Vector2(820, 447)
 
 [node name="Marker2D4" type="Marker2D" parent="_SpearDropPoints" unique_id=393164856 groups=["spear_points"]]
 position = Vector2(441, 306)
+
+[node name="CameraDolly" parent="." unique_id=2135089813 node_paths=PackedStringArray("objetivo") instance=ExtResource("5_7jvx1")]
+objetivo = NodePath("../Player")
+punto_a = Vector2(500, 322.205)
+punto_b = Vector2(800, 322.205)
+
+[node name="Camera2D2" type="Camera2D" parent="CameraDolly" unique_id=1998424924]
