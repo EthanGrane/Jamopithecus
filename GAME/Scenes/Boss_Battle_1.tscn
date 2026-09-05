@@ -1,8 +1,10 @@
 [gd_scene format=3 uid="uid://dhqdggwgoh3yy"]
 
+[ext_resource type="PackedScene" uid="uid://fbjgye8ct80e" path="res://GAME/Water/agua.tscn" id="1_13c7o"]
 [ext_resource type="PackedScene" uid="uid://e7ibnnthjk0k" path="res://GAME/Boss1/boos_1.tscn" id="2_13c7o"]
 [ext_resource type="PackedScene" uid="uid://bj6ortxtfsb0q" path="res://GAME/Boss1/pipe.tscn" id="3_8ptxo"]
 [ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="4_788jl"]
+[ext_resource type="PackedScene" path="res://GAME/Camera/camera_dolly.tscn" id="4_xnh4b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rd6jl"]
 size = Vector2(1180, 45.75)
@@ -16,42 +18,70 @@ gradient = SubResource("Gradient_mo1hk")
 
 [node name="BossBattle1" type="Node2D" unique_id=1682470945]
 
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=855107703]
+[node name="Agua" parent="." unique_id=875838277 instance=ExtResource("1_13c7o")]
+z_index = 1
+offset_left = -792.0
+offset_top = 604.0
+offset_right = 116.0
+offset_bottom = 804.0
+scale = Vector2(3.32, 1)
+
+[node name="Ground" type="StaticBody2D" parent="." unique_id=855107703]
+position = Vector2(797.99994, 694)
+scale = Vector2(2.2399993, 4.2)
 collision_layer = 3
 collision_mask = 3
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=376635679]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground" unique_id=376635679]
 light_mask = 3
 visibility_layer = 3
-position = Vector2(572, 636.125)
 shape = SubResource("RectangleShape2D_rd6jl")
 
-[node name="Icon" type="Sprite2D" parent="StaticBody2D" unique_id=422062474]
-position = Vector2(575, 634.875)
+[node name="Icon" type="Sprite2D" parent="Ground" unique_id=422062474]
 scale = Vector2(18.40625, 0.7226563)
 texture = SubResource("GradientTexture2D_xnh4b")
 
-[node name="Boos_1" parent="." unique_id=200607943 node_paths=PackedStringArray("pipe_list") instance=ExtResource("2_13c7o")]
+[node name="Boos_1" parent="." unique_id=200607943 instance=ExtResource("2_13c7o")]
 position = Vector2(271, 348)
-pipe_list = [NodePath("../Pipe"), NodePath("../Pipe2"), NodePath("../Pipe3"), NodePath("../Pipe4")]
+onda_radio = 240.0
 
 [node name="Pipe" parent="." unique_id=1170149196 instance=ExtResource("3_8ptxo")]
-position = Vector2(-22, 488)
-pipe_n = 1
+position = Vector2(180, 488)
+scale = Vector2(-1, 1)
 
 [node name="Pipe2" parent="." unique_id=409786084 instance=ExtResource("3_8ptxo")]
-position = Vector2(-29, 12)
-pipe_n = 2
+position = Vector2(-38, 60)
+scale = Vector2(-1, 1)
 
 [node name="Pipe3" parent="." unique_id=435816854 instance=ExtResource("3_8ptxo")]
-position = Vector2(776, 21)
-pipe_n = 3
-area_position = Vector2(250, 0)
+position = Vector2(1594, 69)
+invertir_direccion = true
 
 [node name="Pipe4" parent="." unique_id=1216977234 instance=ExtResource("3_8ptxo")]
-position = Vector2(763, 493)
-pipe_n = 4
-area_position = Vector2(250, 0)
+position = Vector2(1412, 493)
+invertir_direccion = true
 
 [node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("4_788jl")]
 position = Vector2(570, 506)
+
+[node name="CameraDolly" parent="." unique_id=1432448215 node_paths=PackedStringArray("objetivo") instance=ExtResource("4_xnh4b")]
+objetivo = NodePath("../Mosca")
+punto_a = Vector2(400, 323.375)
+punto_b = Vector2(1200, 323.375)
+sacudida_maxima = null
+
+[node name="Camera2D2" type="Camera2D" parent="CameraDolly" unique_id=849023627]
+
+[node name="_SpearsPoints" type="Node2D" parent="." unique_id=1106100700]
+
+[node name="Marker2D" type="Marker2D" parent="_SpearsPoints" unique_id=1974674989 groups=["spear_points"]]
+position = Vector2(448, 571)
+
+[node name="Marker2D2" type="Marker2D" parent="_SpearsPoints" unique_id=911351931 groups=["spear_points"]]
+position = Vector2(1207, 576)
+
+[node name="Marker2D3" type="Marker2D" parent="_SpearsPoints" unique_id=1028159686 groups=["spear_points"]]
+position = Vector2(1570, 453)
+
+[node name="Marker2D4" type="Marker2D" parent="_SpearsPoints" unique_id=704088291 groups=["spear_points"]]
+position = Vector2(-7, 453)

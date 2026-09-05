@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://GAME/VFX/shockwave.gd" id="1_sw"]
+[ext_resource type="Shader" path="res://GAME/VFX/shockwave.gdshader" id="2_sw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sw"]
+resource_local_to_scene = true
+shader = ExtResource("2_sw")
+shader_parameter/progreso = 0.0
+shader_parameter/grosor = 0.08
+shader_parameter/fuerza = 24.0
+shader_parameter/color_borde = Color(1, 1, 1, 0.25)
+
+[node name="Shockwave" type="ColorRect"]
+z_index = 100
+offset_right = 600.0
+offset_bottom = 600.0
+mouse_filter = 2
+script = ExtResource("1_sw")
+material = SubResource("ShaderMaterial_sw")

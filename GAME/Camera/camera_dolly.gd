@@ -27,6 +27,9 @@ class_name CameraDolly
 @export var adelanto : float = 80.0           # px que se asoma hacia donde corre
 @export var suavizado_adelanto : float = 3.0
 
+@export_group("Sacudida")
+@export var sacudida_maxima : float = 20.0   # px de desplazamiento como mucho
+
 @export_group("Dibujo en el editor")
 @export var mostrar_bounds : bool = true : set = _set_mostrar_bounds
 @export var color_rail : Color = Color(0.35, 0.85, 1.0)
@@ -37,12 +40,18 @@ var centro_x : float = 0.0
 var adelanto_actual : float = 0.0
 var primer_frame : bool = true
 
+var trauma : float = 0.0            # 0 a 1, cuánto tiembla ahora mismo
+var caida_del_trauma : float = 4.0
+
 
 func _ready() -> void:
 	camara = get_node_or_null("Camera2D")
 
 	if Engine.is_editor_hint():
 		return
+
+	# Para que GameFeel.sacudir() la encuentre sin conocerla
+	add_to_group("camera_shake")
 
 	if camara == null:
 		push_error("CameraDolly: falta un Camera2D como hijo")
@@ -71,7 +80,12 @@ func _process(_delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if Engine.is_editor_hint() or objetivo == null or camara == null:
+	if Engine.is_editor_hint() or camara == null:
+		return
+
+	actualizar_sacudida(delta)
+
+	if objetivo == null:
 		return
 
 	# Al arrancar la cámara aparece ya en su sitio, sin viajar hasta él.
@@ -104,6 +118,33 @@ func _physics_process(delta: float) -> void:
 	# 4) Suavizado
 	camara.position.x = lerpf(camara.position.x, centro_x, suavizar(suavizado, delta))
 	camara.position.y = punto_a.y
+
+
+# ---------------------------------------------------------------
+#  Sacudida
+# ---------------------------------------------------------------
+
+# La llama GameFeel.sacudir() a través del grupo "camera_shake"
+func sacudir(fuerza: float = 10.0, duracion: float = 0.25) -> void:
+	trauma = minf(trauma + fuerza / sacudida_maxima, 1.0)
+	caida_del_trauma = 1.0 / maxf(duracion, 0.05)
+
+
+func actualizar_sacudida(delta: float) -> void:
+	if trauma <= 0.0:
+		if camara.offset != Vector2.ZERO:
+			camara.offset = Vector2.ZERO
+		return
+
+	trauma = maxf(trauma - caida_del_trauma * delta, 0.0)
+
+	# Al cuadrado: arranca fuerte y se apaga suave. Con trauma lineal
+	# la sacudida se corta de golpe y se nota artificial
+	var f := trauma * trauma * sacudida_maxima
+
+	# Va en 'offset' y no en 'position' porque de la position
+	# ya se encarga el raíl cada frame
+	camara.offset = Vector2(randf_range(-f, f), randf_range(-f, f))
 
 
 # Planta la cámara en su sitio de golpe, sin suavizar.
