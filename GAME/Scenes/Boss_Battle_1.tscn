@@ -43,6 +43,8 @@ texture = SubResource("GradientTexture2D_xnh4b")
 
 [node name="Boos_1" parent="." unique_id=200607943 instance=ExtResource("2_13c7o")]
 position = Vector2(271, 348)
+velocidad_min = 400.0
+velocidad_max = 500.0
 onda_radio = 240.0
 
 [node name="Pipe" parent="." unique_id=1170149196 instance=ExtResource("3_8ptxo")]
@@ -68,7 +70,6 @@ position = Vector2(570, 506)
 objetivo = NodePath("../Mosca")
 punto_a = Vector2(400, 323.375)
 punto_b = Vector2(1200, 323.375)
-sacudida_maxima = null
 
 [node name="Camera2D2" type="Camera2D" parent="CameraDolly" unique_id=849023627]
 

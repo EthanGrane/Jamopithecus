@@ -31,6 +31,10 @@ enum Estado {
 @export var duracion_del_golpe : float = 0.25
 
 @export_group("Gamefeel del golpe")
+@export var sonido_golpe : AudioStream = preload("res://GAME/SFX/Spear_HitFlesh.wav")
+@export_range(-40.0, 12.0) var volumen_golpe : float = 0.0
+@export var tono_min : float = 0.94         # variación de tono para que no suene a copia
+@export var tono_max : float = 1.06
 @export var hitstop : float = 0.08          # cuánto se congela el juego
 @export var sacudida_fuerza : float = 12.0
 @export var sacudida_duracion : float = 0.30
@@ -172,6 +176,7 @@ func aturdir() -> void:
 
 	# El orden importa poco, pero así se lee: primero lo que se ve
 	# encima del boss, luego lo que afecta a toda la pantalla
+	GameFeel.sonar(sonido_golpe, global_position, volumen_golpe, tono_min, tono_max)
 	destello()
 	golpe_de_escala()
 	lanzar_onda()

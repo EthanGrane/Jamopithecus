@@ -1,9 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://e7ibnnthjk0k"]
+[gd_scene format=3 uid="uid://e7ibnnthjk0k"]
 
 [ext_resource type="Script" uid="uid://sq8n4awd0l00" path="res://GAME/Boss1/boos_1.gd" id="1_8mmf7"]
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_ynxwx"]
 [ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="3_2tfwi"]
-[ext_resource type="Shader" path="res://GAME/VFX/hit_flash.gdshader" id="4_flash"]
+[ext_resource type="Shader" uid="uid://bflnudy0jy0h0" path="res://GAME/VFX/hit_flash.gdshader" id="4_flash"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flash"]
 resource_local_to_scene = true
