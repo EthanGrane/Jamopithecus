@@ -1,4 +1,4 @@
-extends CharacterBody2D
+class_name player extends CharacterBody2D
 
 @export_group("Movimiento")
 @export var velocidad : float = 400.0
@@ -27,10 +27,14 @@ extends CharacterBody2D
 @onready var gravedad_subiendo : float = 2.0 * altura_salto / pow(tiempo_de_subida, 2.0)
 @onready var gravedad_cayendo : float = 2.0 * altura_salto / pow(tiempo_de_bajada, 2.0)
 
+var direccion : float
 var saltos_dados : int = 0
 var coyote_restante : float = 0.0
 var buffer_restante : float = 0.0
+var is_in_dash : bool = false
 
+func _ready() -> void:
+	$Sprite2D.play("idle")
 
 func _physics_process(delta: float) -> void:
 	actualizar_ayudas(delta)
@@ -96,20 +100,40 @@ func gravedad_actual() -> float:
 
 
 func mover_en_horizontal(delta: float) -> void:
-	var direccion := Input.get_axis("Left", "Right")
-
+	if not is_in_dash:
+		direccion = Input.get_axis("Left", "Right")
 	var acelera = aceleracion_suelo if is_on_floor() else aceleracion_aire
 	var frena = frenada_suelo if is_on_floor() else frenada_aire
-	if velocity.x > 0.0:
-		$Sprite2D.flip_h = true
-	elif velocity.x < 0.0:
-		$Sprite2D.flip_h = false
+	if velocity.x != 0.0:
+		$Sprite2D.play("Walk")
+		if velocity.x > 0.0:
+			$Sprite2D.flip_h = true
+		elif velocity.x < 0.0:
+			$Sprite2D.flip_h = false
+	else:
+		if velocity.y == 0.0:
+			$Sprite2D.play("idle")
 	if direccion != 0.0:
 		velocity.x = move_toward(velocity.x, direccion * velocidad, acelera * delta)
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, frena * delta)
 
+func _input(event: InputEvent) -> void:
+	if Input.is_action_just_pressed("Dash") and not is_in_dash:
+		dash()
+	if Input.is_action_just_pressed("Decoy"):
+		decoy()
 
+func dash():
+	velocidad = 800
+	is_in_dash = true
+	await get_tree().create_timer(0.3).timeout
+	print("hola")
+	velocidad = 400
+	is_in_dash = false
+
+func decoy():
+	pass
 func _on_area_2d_area_entered(area: Area2D) -> void:
 	if area.is_in_group("enemy"):
 		print("mori")

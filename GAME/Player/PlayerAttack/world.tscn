@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://bme35rir0y4c6"]
+
+[ext_resource type="Script" uid="uid://coagpgysfd7j2" path="res://world.gd" id="1_f11fv"]
+[ext_resource type="PackedScene" uid="uid://bk1cy1mfk6sa4" path="res://GAME/Player/TEST.tscn" id="2_564o2"]
+[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="3_ofw5a"]
+
+[node name="World" type="Node2D" unique_id=2125391229 node_paths=PackedStringArray("the_player")]
+script = ExtResource("1_f11fv")
+the_player = NodePath("Mosca")
+
+[node name="Node2D" parent="." unique_id=1288559101 instance=ExtResource("2_564o2")]
+position = Vector2(23, 9)
+
+[node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("3_ofw5a")]
+position = Vector2(568, 541)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://26k0sc2c5rtg"
-path="res://.godot/imported/Walker_sprite.png-749f0602717e47e00ec1c18e862ad56f.ctex"
+uid="uid://drd658mm8hrw1"
+path="res://.godot/imported/Walker_Idle9.png-84b1b4c0deb19e3e07bc5612972c8874.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://GAME/Walker_sprite.png"
-dest_files=["res://.godot/imported/Walker_sprite.png-749f0602717e47e00ec1c18e862ad56f.ctex"]
+source_file="res://GAME/Player/Sprites/idle/Walker_Idle9.png"
+dest_files=["res://.godot/imported/Walker_Idle9.png-84b1b4c0deb19e3e07bc5612972c8874.ctex"]
 
 [params]
 

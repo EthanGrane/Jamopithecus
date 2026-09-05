@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://5rp1vvpuweth"]
+
+[ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="1_7llmo"]
+[ext_resource type="PackedScene" uid="uid://b27scjcd6tswn" path="res://GAME/HealthSystem/hitbox_component.tscn" id="2_dthtc"]
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="3_vqd3h"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
+size = Vector2(59, 77)
+
+[node name="Decoy" type="StaticBody2D" unique_id=946914689 groups=["Decoy"]]
+
+[node name="HealthComponent" parent="." unique_id=654470910 instance=ExtResource("1_7llmo")]
+position = Vector2(-2, 0)
+max_health = 1
+
+[node name="HitboxComponent" parent="." unique_id=1078440589 node_paths=PackedStringArray("health_component") instance=ExtResource("2_dthtc")]
+position = Vector2(-2, 0)
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent" unique_id=1307591797]
+position = Vector2(0, 1)
+shape = SubResource("RectangleShape2D_5sv2w")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1021226130]
+position = Vector2(-1, 1.0000002)
+scale = Vector2(0.4453125, 0.6015625)
+texture = ExtResource("3_vqd3h")

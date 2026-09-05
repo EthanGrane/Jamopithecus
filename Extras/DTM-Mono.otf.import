@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://dj3dko4qnyq34"
-path="res://.godot/imported/DTM-Mono.otf-40c8a864e2776cdf89dda3a796381554.fontdata"
+path="res://.godot/imported/DTM-Mono.otf-9e9c88f7ae3f7d7f715336139c5f300c.fontdata"
 
 [deps]
 
-source_file="res://GAME/Player/PlayerAttack/DTM-Mono.otf"
-dest_files=["res://.godot/imported/DTM-Mono.otf-40c8a864e2776cdf89dda3a796381554.fontdata"]
+source_file="res://Extras/DTM-Mono.otf"
+dest_files=["res://.godot/imported/DTM-Mono.otf-9e9c88f7ae3f7d7f715336139c5f300c.fontdata"]
 
 [params]
 

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dkp3ldn8c3h6x"]
 
 [ext_resource type="Script" uid="uid://2r3qbobueclh" path="res://GAME/Player/PlayerAttack/spear.gd" id="1_spear"]
-[ext_resource type="Texture2D" uid="uid://26k0sc2c5rtg" path="res://GAME/Walker_sprite.png" id="2_ppbye"]
+[ext_resource type="Texture2D" uid="uid://26k0sc2c5rtg" path="res://GAME/Player/Walker_sprite.png" id="2_ppbye"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_spear"]
 radius = 4.1231055

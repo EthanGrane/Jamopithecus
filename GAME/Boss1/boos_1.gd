@@ -23,7 +23,7 @@ func _physics_process(delta: float) -> void:
 func Tp_to_random_pipe(current_pipe : int):
 	print("hey")
 	var pipe_n = randi_range(1,4)
-	if pipe_n == current_pipe:
+	if pipe_n == last_pipe:
 		Tp_to_random_pipe(current_pipe)
 	else:
 		velocity = Vector2.ZERO
@@ -42,7 +42,7 @@ func Tp_to_random_pipe(current_pipe : int):
 			4: 
 				direction = 1.0
 				position = pipe_list[3].position + diference
-
+		last_pipe = pipe_n
 		print(global_position)
 func movement_gravity(delta):
 	if current_state == state.movement:

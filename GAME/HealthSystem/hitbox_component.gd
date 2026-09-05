@@ -19,3 +19,10 @@ func onTakeDamage():
 
 func _on_area_entered(area: Area2D) -> void:
 	pass
+
+
+func _on_body_entered(body: Node2D) -> void:
+	if health_component:
+		var dad := get_parent()
+		if dad.is_in_group("Decoy") and body is Boss1:
+			health_component.take_damage(damage_amount)
