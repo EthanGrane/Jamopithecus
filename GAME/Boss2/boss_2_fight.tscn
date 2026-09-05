@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://b56rpd4nnfnh0"]
+
+[ext_resource type="PackedScene" uid="uid://bj6ortxtfsb0q" path="res://GAME/Boss1/pipe.tscn" id="1_f3nqq"]
+[ext_resource type="Script" uid="uid://2renwy4hgh0d" path="res://GAME/Boss2/boss_2_fight.gd" id="1_gwcke"]
+[ext_resource type="PackedScene" uid="uid://ch6ehihn3ebbx" path="res://GAME/Boss2/renacuajo.tscn" id="3_xf1s6"]
+[ext_resource type="PackedScene" uid="uid://fbjgye8ct80e" path="res://GAME/Water/agua.tscn" id="4_qbwus"]
+[ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="5_cqny5"]
+
+[node name="Boss_2_fight" type="Node2D" unique_id=947395531 node_paths=PackedStringArray("pipes")]
+script = ExtResource("1_gwcke")
+pipes = [NodePath("Pipe1"), NodePath("Pipe2"), NodePath("Pipe3")]
+
+[node name="Pipe2" parent="." unique_id=1170149196 instance=ExtResource("1_f3nqq")]
+position = Vector2(581.99994, 487)
+rotation = 1.5720663
+area_position = Vector2(0, -300)
+
+[node name="Pipe3" parent="." unique_id=1831029755 instance=ExtResource("1_f3nqq")]
+position = Vector2(962, 497)
+rotation = 1.5707964
+area_position = Vector2(0, -300)
+
+[node name="Pipe1" parent="." unique_id=1398414388 instance=ExtResource("1_f3nqq")]
+position = Vector2(251, 485)
+rotation = 1.5707964
+area_position = Vector2(200, 0)
+
+[node name="Timer" type="Timer" parent="." unique_id=1644543785]
+wait_time = 5.0
+
+[node name="Boss2" parent="." unique_id=1623018016 node_paths=PackedStringArray("_player") instance=ExtResource("3_xf1s6")]
+position = Vector2(362, 730)
+_player = NodePath("../Mosca")
+
+[node name="Agua" parent="." unique_id=875838277 instance=ExtResource("4_qbwus")]
+offset_left = 10.0
+offset_top = 461.0
+offset_right = 1164.0
+offset_bottom = 691.0
+
+[node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("5_cqny5")]
+position = Vector2(536, 403)
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
