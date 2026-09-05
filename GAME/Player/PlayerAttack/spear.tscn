@@ -6,8 +6,9 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_spear"]
 radius = 4.1231055
 
-[node name="Spear" type="Area2D" unique_id=748100319]
+[node name="Spear" type="Area2D" unique_id=748100319 groups=["player_spear"]]
 scale = Vector2(2, 2)
+collision_layer = 3
 script = ExtResource("1_spear")
 gravedad_al_lanzar = 1200.0
 offset_en_mano = Vector2(-9, -3)

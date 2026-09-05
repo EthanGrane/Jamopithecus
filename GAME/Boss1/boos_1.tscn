@@ -3,13 +3,9 @@
 [ext_resource type="Script" uid="uid://sq8n4awd0l00" path="res://GAME/Boss1/boos_1.gd" id="1_8mmf7"]
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_ynxwx"]
 [ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="3_2tfwi"]
-[ext_resource type="PackedScene" uid="uid://b27scjcd6tswn" path="res://GAME/HealthSystem/hitbox_component.tscn" id="4_pv43l"]
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
-radius = 35.128338
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_p8y83"]
-radius = 63.007935
+radius = 64.00781
 
 [node name="Boos_1" type="CharacterBody2D" unique_id=200607943 groups=["Enemy"]]
 collision_mask = 2
@@ -22,17 +18,6 @@ texture = ExtResource("2_ynxwx")
 [node name="HealthComponent" parent="." unique_id=654470910 instance=ExtResource("3_2tfwi")]
 position = Vector2(228, 173)
 
-[node name="HitboxComponent" parent="." unique_id=1078440589 instance=ExtResource("4_pv43l")]
-position = Vector2(308, 53)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent" unique_id=98228375]
-position = Vector2(-59, 5)
-shape = SubResource("CircleShape2D_5sv2w")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1440069700]
-position = Vector2(310, 55)
+position = Vector2(310, 62)
 shape = SubResource("CircleShape2D_p8y83")
-
-[node name="RayCast2D" type="RayCast2D" parent="." unique_id=920737161]
-position = Vector2(310, 59)
-target_position = Vector2(0, 76)

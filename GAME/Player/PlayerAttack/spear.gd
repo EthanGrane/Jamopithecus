@@ -1,4 +1,4 @@
-extends Area2D
+class_name Spear extends Area2D
 
 # Los estados posibles de la lanza.
 # Un enum es una lista de nombres que Godot convierte en números por dentro,
@@ -129,6 +129,7 @@ func _on_body_entered(body: Node2D) -> void:
 	var health_component = body.get_node_or_null("HealthComponent")
 
 	if health_component:
+		print("ocurre")
 		health_component.take_damage(dano)
 		enemigo_clavado = body
 		contador_clavada = tiempo_que_se_queda_clavada

@@ -26,7 +26,7 @@ scale = Vector2(9.156251, 0.2890625)
 texture = ExtResource("1_p8y83")
 
 [node name="Boos_1" parent="." unique_id=2103720783 node_paths=PackedStringArray("pipe_list") instance=ExtResource("2_p8y83")]
-position = Vector2(245, 307)
+position = Vector2(271, 348)
 pipe_list = [NodePath("../Pipe"), NodePath("../Pipe2"), NodePath("../Pipe3"), NodePath("../Pipe4")]
 
 [node name="Pipe" parent="." unique_id=1170149196 instance=ExtResource("3_ke4op")]
