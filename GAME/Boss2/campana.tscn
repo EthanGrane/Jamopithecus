@@ -1,17 +1,19 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://8wrn05fo5cht"]
 
-[ext_resource type="Script" path="res://GAME/Boss2/campana.gd" id="1_campana"]
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Script" uid="uid://d2lsv0jh0lwo8" path="res://GAME/Boss2/campana.gd" id="1_campana"]
+[ext_resource type="Texture2D" uid="uid://dskldqvnnussd" path="res://GAME/Boss2/canpana.png" id="2_2riun"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_campana"]
 radius = 40.0
 
-[node name="Campana" type="StaticBody2D"]
+[node name="Campana" type="StaticBody2D" unique_id=2137151460]
 script = ExtResource("1_campana")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.6, 0.6)
-texture = ExtResource("2_icon")
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1706689101]
+texture_filter = 1
+position = Vector2(-5, 6)
+scale = Vector2(4.05, 4.05)
+texture = ExtResource("2_2riun")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=634482022]
 shape = SubResource("CircleShape2D_campana")
