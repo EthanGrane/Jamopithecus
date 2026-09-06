@@ -257,6 +257,7 @@ espera_mirando = 2.0
 duracion_vuelta = 1.0
 
 [node name="Canvas_Vignette" type="CanvasLayer" parent="." unique_id=1265422618 node_paths=PackedStringArray("colorRect") groups=["Vignette"]]
+visible = false
 script = ExtResource("10_sbmxg")
 colorRect = NodePath("ColorRect")
 radius = 0.445
