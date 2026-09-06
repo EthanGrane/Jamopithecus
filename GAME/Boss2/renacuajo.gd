@@ -29,24 +29,6 @@ enum Estado {
 @export var velocidad_de_caida : float = 900.0
 @export var giro_al_caer : float = 6.0
 
-@export_group("Gamefeel del golpe")
-@export var sonido_golpe : AudioStream = preload("res://GAME/SFX/Spear_HitFlesh.wav")
-@export_range(-40.0, 12.0) var volumen_golpe : float = 0.0
-@export var tono_min : float = 0.94         # variación de tono en cada golpe
-@export var tono_max : float = 1.06
-@export var hitstop : float = 0.10          # cuánto se congela el juego
-@export var sacudida_fuerza : float = 14.0
-@export var sacudida_duracion : float = 0.30
-@export var destello_duracion : float = 0.12
-@export var escala_del_golpe : Vector2 = Vector2(1.35, 0.65)  # el squash del punch
-@export var duracion_del_golpe : float = 0.25
-
-@export_group("Onda de choque")
-@export var onda_al_golpear : bool = true
-@export var onda_radio : float = 300.0
-@export var onda_fuerza : float = 26.0
-@export var onda_duracion : float = 0.40
-
 var estado : Estado = Estado.BAJO_EL_AGUA
 var salud : HealthComponent = null
 
@@ -57,14 +39,13 @@ var duracion : float = 1.6
 var y_del_agua : float = 0.0
 var avance : float = 0.0      # 0 a 1 dentro del arco
 var capa_original : int = 1
-var escala_base : Vector2 = Vector2.ONE
 
 @onready var sprite : Sprite2D = $Sprite2D
+@onready var reaccion : HitReactionComponent = $HitReactionComponent
 
 
 func _ready() -> void:
 	capa_original = collision_layer
-	escala_base = sprite.scale
 
 	# No choca contra nada: vuela por el aire y solo necesita
 	# que la lanza pueda detectarlo
@@ -155,55 +136,8 @@ func caer() -> void:
 	if salud != null:
 		salud.invulnerable = true   # no se le puede rematar mientras cae
 
-	# Mismo paquete de impacto que el Boss1: primero lo que se ve
-	# encima del boss, luego lo que afecta a toda la pantalla
-	GameFeel.sonar(sonido_golpe, global_position, volumen_golpe, tono_min, tono_max)
-	destello()
-	golpe_de_escala()
-	lanzar_onda()
-	GameFeel.golpe(hitstop, sacudida_fuerza, sacudida_duracion)
-
-
-# Destello blanco. Necesita el hit_flash.gdshader en el material del Sprite2D
-func destello() -> void:
-	if sprite.material == null:
-		return
-
-	_poner_blanco(1.0)
-	var tw := create_tween()
-	tw.tween_method(_poner_blanco, 1.0, 0.0, destello_duracion)
-
-
-func _poner_blanco(valor: float) -> void:
-	var mat := sprite.material as ShaderMaterial
-	if mat != null:
-		mat.set_shader_parameter("blanco", valor)
-
-
-# Se aplasta de golpe y vuelve a su escala con un rebote.
-# Al ir sobre el sprite y no sobre el nodo, el squash sigue
-# la inclinación del pez en vez de estar siempre recto
-func golpe_de_escala() -> void:
-	sprite.scale = escala_base * escala_del_golpe
-
-	var tw := create_tween()
-	tw.tween_property(sprite, "scale", escala_base, duracion_del_golpe)\
-		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-
-
-# La onda cuelga de la escena, no del boss: si el golpe lo mata,
-# el boss se borra pero la onda termina de expandirse igual
-func lanzar_onda() -> void:
-	if not onda_al_golpear:
-		return
-
-	Shockwave.crear(
-		get_tree().current_scene,
-		global_position,
-		onda_radio,
-		onda_fuerza,
-		onda_duracion
-	)
+	# Sonido, destello, punch, onda, hitstop y sacudida, todo de golpe
+	reaccion.reaccionar()
 
 
 func caer_al_agua(delta: float) -> void:
@@ -222,8 +156,7 @@ func esconderse() -> void:
 	visible = false
 	rotation = 0.0
 	velocity = Vector2.ZERO
-	sprite.scale = escala_base   # por si se escondió a mitad del punch
-	_poner_blanco(0.0)
+	reaccion.restablecer()   # por si se escondió a mitad del punch o del destello
 	poner_colisiones(false)
 
 	if salud != null:

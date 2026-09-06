@@ -1,9 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://ch6ehihn3ebbx"]
+[gd_scene load_steps=8 format=3 uid="uid://ch6ehihn3ebbx"]
 
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_banr1"]
 [ext_resource type="Script" uid="uid://co8ndyj3u4gbg" path="res://GAME/Boss2/renacuajo.gd" id="1_norkw"]
 [ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="3_health"]
-[ext_resource type="Shader" path="res://GAME/VFX/hit_flash.gdshader" id="4_flash"]
+[ext_resource type="Shader" uid="uid://bflnudy0jy0h0" path="res://GAME/VFX/hit_flash.gdshader" id="4_flash"]
+[ext_resource type="PackedScene" path="res://GAME/VFX/hit_reaction_component.tscn" id="5_hit"]
+[ext_resource type="AudioStreamWAV" path="res://GAME/SFX/Spear_HitFlesh.wav" id="6_sfx"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flash"]
 resource_local_to_scene = true
@@ -28,3 +30,10 @@ texture = ExtResource("1_banr1")
 shape = SubResource("CircleShape2D_5sv2w")
 
 [node name="HealthComponent" parent="." unique_id=654470911 instance=ExtResource("3_health")]
+
+[node name="HitReactionComponent" parent="." instance=ExtResource("5_hit")]
+sonido = ExtResource("6_sfx")
+hitstop = 0.1
+sacudida_fuerza = 14.0
+onda_radio = 300.0
+onda_fuerza = 26.0
