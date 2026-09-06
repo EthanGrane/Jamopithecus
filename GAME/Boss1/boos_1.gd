@@ -12,6 +12,7 @@ enum Estado {
 	RODANDO,    # va a lo suyo, rebotando por la sala
 	ATURDIDO,   # le han dado: quieto, sin colisiones y sin poder recibir más
 	DENTRO,     # escondido en una tubería mientras ésta avisa
+	HUYENDO,    # inmortal tras un golpe: corre a esconderse en una tubería
 }
 
 @export_group("Movimiento")
@@ -32,26 +33,20 @@ enum Estado {
 @export var duracion_al_entrar : float = 0.18
 @export var duracion_al_salir : float = 0.22
 
+@export_group("Colisiones")
+# Atraviesa al jugador sin tener que reorganizar capas. Se hace con
+# una excepción de colisión, que es por pareja de cuerpos
+@export var atravesar_al_jugador : bool = true
+
+@export_group("Huida")
+# Tras el golpe es inmortal, así que en vez de quedarse a tiro
+# sale disparado a esconderse atravesando el escenario
+@export var multiplicador_al_huir : float = 2.0
+@export_range(0.0, 1.0) var alpha_al_huir : float = 0.55  # semitransparente = intocable
+
 @export_group("Aturdimiento")
 @export var tiempo_aturdido : float = 1.5
-@export var escala_del_golpe : Vector2 = Vector2(1.35, 0.65)  # el squash del punch
-@export var duracion_del_golpe : float = 0.25
 
-@export_group("Gamefeel del golpe")
-@export var sonido_golpe : AudioStream = preload("res://GAME/SFX/Spear_HitFlesh.wav")
-@export_range(-40.0, 12.0) var volumen_golpe : float = 0.0
-@export var tono_min : float = 0.94         # variación de tono para que no suene a copia
-@export var tono_max : float = 1.06
-@export var hitstop : float = 0.08          # cuánto se congela el juego
-@export var sacudida_fuerza : float = 12.0
-@export var sacudida_duracion : float = 0.30
-@export var destello_duracion : float = 0.12
-
-@export_group("Onda de choque")
-@export var onda_al_golpear : bool = true
-@export var onda_radio : float = 320.0
-@export var onda_fuerza : float = 28.0
-@export var onda_duracion : float = 0.40
 
 var estado : Estado = Estado.RODANDO
 var direccion : float = 1.0
@@ -61,19 +56,61 @@ var cooldown_tuberia : float = 0.0
 var contador_dentro : float = 0.0
 var ultima_tuberia : Pipe = null
 var tuberia_destino : Pipe = null
+var tuberia_refugio : Pipe = null
+var mascara_original : int = 1
 var capa_original : int = 0
-var escala_base : Vector2 = Vector2.ONE
-var tween_sprite : Tween = null
 
 @onready var sprite : Sprite2D = $Sprite2D
 @onready var salud : HealthComponent = $HealthComponent
+@onready var reaccion : HitReactionComponent = $HitReactionComponent
 
 
 func _ready() -> void:
 	capa_original = collision_layer
-	escala_base = sprite.scale
+	mascara_original = collision_mask
 	velocidad = randf_range(velocidad_min, velocidad_max)
 	direccion = 1.0 if randf() < 0.5 else -1.0
+
+	# En diferido: durante el _ready la escena aún se está montando
+	# y el jugador puede no estar accesible todavía
+	if atravesar_al_jugador:
+		call_deferred("ignorar_al_jugador")
+
+
+# Le dice al motor que estos dos cuerpos no chocan entre sí, sin
+# tocar capas ni máscaras. Se pone en los dos lados por si acaso
+func ignorar_al_jugador() -> void:
+	var jugador := buscar_jugador()
+	if jugador == null:
+		push_warning("Boss1: no encuentro al jugador para ignorar su colisión")
+		return
+
+	add_collision_exception_with(jugador)
+	jugador.add_collision_exception_with(self)
+
+
+func buscar_jugador() -> PhysicsBody2D:
+	# Primero por grupo, que es lo barato
+	var por_grupo := get_tree().get_first_node_in_group("player")
+	if por_grupo is PhysicsBody2D:
+		return por_grupo
+
+	# Y si no está en el grupo, lo buscamos por su clase
+	return buscar_por_clase(get_tree().current_scene)
+
+
+func buscar_por_clase(nodo: Node) -> PhysicsBody2D:
+	if nodo == null:
+		return null
+	if nodo is player:
+		return nodo
+
+	for hijo in nodo.get_children():
+		var encontrado := buscar_por_clase(hijo)
+		if encontrado != null:
+			return encontrado
+
+	return null
 
 
 func _physics_process(delta: float) -> void:
@@ -89,8 +126,13 @@ func _physics_process(delta: float) -> void:
 			rodar(delta)
 		Estado.ATURDIDO:
 			estar_aturdido(delta)
+		Estado.HUYENDO:
+			huir(delta)
 
-	aplicar_gravedad(delta)
+	# Huyendo no le afecta la gravedad: va en línea recta a su tubería
+	if estado != Estado.HUYENDO:
+		aplicar_gravedad(delta)
+
 	move_and_slide()
 
 	# Si choca con una pared se da la vuelta y sigue rodando
@@ -114,6 +156,50 @@ func aplicar_gravedad(delta: float) -> void:
 		velocity.y = 0.0
 	else:
 		velocity.y = minf(velocity.y + gravedad * delta, velocidad_maxima_de_caida)
+
+
+# ---------------------------------------------------------------
+#  Huida
+# ---------------------------------------------------------------
+
+# Va en línea recta a la tubería más cercana, atravesando lo que haga
+# falta. No hace falta detectar la llegada: el Area2D de la tubería
+# lo ve igual, porque las áreas miran la CAPA y esa no se toca
+func huir(delta: float) -> void:
+	if tuberia_refugio == null or not is_instance_valid(tuberia_refugio):
+		terminar_huida()
+		return
+
+	var hacia := tuberia_refugio.punto_de_salida() - global_position
+
+	velocity = hacia.normalized() * velocidad * multiplicador_al_huir
+
+	if absf(hacia.x) > 1.0:
+		direccion = signf(hacia.x)
+	sprite.rotation += giro_en_aire * multiplicador_al_huir * direccion * delta
+
+	# Por si el área de la boca se le escapa entre frames
+	if hacia.length() < 24.0:
+		entrar_en_tuberia(tuberia_refugio)
+
+
+# Si no hay tuberías a las que ir, sigue rodando normal (pero inmortal)
+func terminar_huida() -> void:
+	estado = Estado.RODANDO
+	set_deferred("collision_mask", mascara_original)
+
+
+func tuberia_mas_cercana() -> Pipe:
+	var mejor : Pipe = null
+	var mejor_distancia := INF
+
+	for t in get_tree().get_nodes_in_group("pipes"):
+		var d := global_position.distance_to(t.punto_de_salida())
+		if d < mejor_distancia:
+			mejor_distancia = d
+			mejor = t
+
+	return mejor
 
 
 # ---------------------------------------------------------------
@@ -156,24 +242,24 @@ func ser_tragado() -> void:
 		esconderse_del_todo()
 		return
 
-	matar_tween_sprite()
-
 	# Endereza el sprite al giro completo más cercano, para que
 	# el aplastamiento se vea horizontal y no en diagonal
 	var rotacion_recta := roundf(sprite.rotation / TAU) * TAU
 
-	tween_sprite = create_tween()
-	tween_sprite.tween_property(sprite, "scale", escala_base * escala_al_entrar, duracion_al_entrar)\
+	# El Tween lo pide el componente: es el único dueño de la escala
+	# del sprite, así este punch nunca pelea con el del golpe
+	var tw := reaccion.crear_tween_de_sprite()
+	tw.tween_property(sprite, "scale", reaccion.escala_base * escala_al_entrar, duracion_al_entrar)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	tween_sprite.parallel().tween_property(sprite, "rotation", rotacion_recta, duracion_al_entrar)\
+	tw.parallel().tween_property(sprite, "rotation", rotacion_recta, duracion_al_entrar)\
 		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
-	tween_sprite.tween_callback(esconderse_del_todo)
+	tw.tween_callback(esconderse_del_todo)
 
 
 func esconderse_del_todo() -> void:
 	visible = false
-	sprite.scale = escala_base
+	reaccion.restablecer()
 
 
 func esperar_dentro(delta: float) -> void:
@@ -256,13 +342,8 @@ func aturdir() -> void:
 	# y la lanza dejan de detectarlo, pero él sigue apoyado en el suelo
 	set_deferred("collision_layer", 0)
 
-	# El orden importa poco, pero así se lee: primero lo que se ve
-	# encima del boss, luego lo que afecta a toda la pantalla
-	GameFeel.sonar(sonido_golpe, global_position, volumen_golpe, tono_min, tono_max)
-	destello()
-	golpe_de_escala()
-	lanzar_onda()
-	GameFeel.golpe(hitstop, sacudida_fuerza, sacudida_duracion)
+	# Sonido, destello, punch, onda, hitstop y sacudida, todo de golpe
+	reaccion.reaccionar()
 
 
 func estar_aturdido(delta: float) -> void:
@@ -273,71 +354,29 @@ func estar_aturdido(delta: float) -> void:
 
 
 func terminar_aturdimiento() -> void:
-	estado = Estado.RODANDO
+	estado = Estado.HUYENDO
+	tuberia_refugio = tuberia_mas_cercana()
+
+	# La CAPA vuelve: las tuberías tienen que poder verlo llegar.
+	# La MÁSCARA se va a cero: atraviesa suelo, paredes y tuberías
 	set_deferred("collision_layer", capa_original)
-	# Ojo: sigue siendo inmortal. Solo se cura pasando por una tubería
+	set_deferred("collision_mask", 0)
+
+	# Semitransparente para que se lea que ahora no le puedes dar
+	modulate.a = alpha_al_huir
 
 
 func volver_a_ser_vulnerable() -> void:
 	salud.invulnerable = false
-
-
-# La onda cuelga de la escena, no del boss: si el golpe lo mata,
-# el boss se borra pero la onda termina de expandirse igual
-func lanzar_onda() -> void:
-	if not onda_al_golpear:
-		return
-
-	Shockwave.crear(
-		get_tree().current_scene,
-		global_position,
-		onda_radio,
-		onda_fuerza,
-		onda_duracion
-	)
-
-
-# Destello blanco. Necesita el hit_flash.gdshader en el material del Sprite2D
-func destello() -> void:
-	if sprite.material == null:
-		return
-
-	_poner_blanco(1.0)
-	var tw := create_tween()
-	tw.tween_method(_poner_blanco, 1.0, 0.0, destello_duracion)
-
-
-func _poner_blanco(valor: float) -> void:
-	var mat := sprite.material as ShaderMaterial
-	if mat != null:
-		mat.set_shader_parameter("blanco", valor)
+	set_deferred("collision_mask", mascara_original)
+	modulate.a = 1.0
 
 
 # Sale estrujado y se despliega de golpe. Es el mismo punch
 # de entrar pero al revés
 func ser_escupido() -> void:
-	matar_tween_sprite()
+	sprite.scale = reaccion.escala_base * escala_al_entrar
 
-	sprite.scale = escala_base * escala_al_entrar
-
-	tween_sprite = create_tween()
-	tween_sprite.tween_property(sprite, "scale", escala_base, duracion_al_salir)\
+	var tw := reaccion.crear_tween_de_sprite()
+	tw.tween_property(sprite, "scale", reaccion.escala_base, duracion_al_salir)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-
-
-# El punch: se aplasta de golpe y vuelve a su escala con un rebote
-func golpe_de_escala() -> void:
-	matar_tween_sprite()
-
-	sprite.scale = escala_base * escala_del_golpe
-
-	tween_sprite = create_tween()
-	tween_sprite.tween_property(sprite, "scale", escala_base, duracion_del_golpe)\
-		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
-
-
-# Todos los punches del sprite usan el mismo Tween: si se solapan
-# dos, el segundo arranca desde una escala a medias y se ve raro
-func matar_tween_sprite() -> void:
-	if tween_sprite != null and tween_sprite.is_valid():
-		tween_sprite.kill()

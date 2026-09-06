@@ -7,7 +7,9 @@
 ##	El bucle:
 ##		PELIGRO → 2 de las 3 tuberías avisan temblando y luego
 ##		          encienden su zona de muerte. La que no tiembla
-##		          es la segura. Se repite de 1 a 3 veces.
+##		          es la segura, y NUNCA es la misma dos tandas
+##		          seguidas: el jugador está obligado a cruzar.
+##		          Se repite de 3 a 5 veces.
 ##		SALTO   → el renacuajo cruza en arco: la ventana para atacarle
 ##
 ##	Dibuja el arco en el editor para que veas la ruta sin darle a play.
@@ -23,8 +25,8 @@ extends Node2D
 
 @export_group("Fase de peligro")
 @export var tuberias_por_tanda : int = 2
-@export var tandas_min : int = 1
-@export var tandas_max : int = 3
+@export var tandas_min : int = 3
+@export var tandas_max : int = 5
 # El tiempo de aviso NO está aquí: lo pone cada tubería en su propio
 # Inspector (duracion_del_aviso), y el director espera a la más lenta
 @export var duracion_del_peligro : float = 1.6 # cuánto dura el chorro
@@ -48,6 +50,7 @@ extends Node2D
 
 var activo : bool = true
 var toca_ida : bool = true   # para el modo Alternar
+var ultima_segura : PipeChorro = null   # para no repetir el patrón
 
 
 func _ready() -> void:
@@ -100,10 +103,21 @@ func fase_peligro() -> void:
 			return
 
 		var es_la_ultima := (i == tandas - 1)
-		var elegidas := elegir_tuberias()
+		var es_la_penultima := (i == tandas - 2)
+
+		var elegidas : Array = []
 
 		if es_la_ultima and ultimo_ataque_lateral:
 			elegidas = tuberias_laterales()
+		else:
+			# La segura de esta tanda no puede ser la de la anterior.
+			# Y si la siguiente es la lateral (que deja libre la del
+			# centro), esta tampoco puede dejar libre la del centro
+			var prohibidas : Array = [ultima_segura]
+			if es_la_penultima and ultimo_ataque_lateral:
+				prohibidas.append(tuberia_central())
+
+			elegidas = elegir_tuberias(prohibidas)
 
 		# 1) Avisan temblando. Las que NO tiemblan son las seguras,
 		#    y el jugador tiene este rato para llegar a una de ellas.
@@ -128,17 +142,32 @@ func fase_peligro() -> void:
 		await esperar(pausa_entre_tandas)
 
 
-# Baraja y coge las primeras: así son distintas cada vez
-# y nunca se repite la misma tubería dentro de una tanda
-func elegir_tuberias() -> Array:
+# Elegimos primero cuál queda A SALVO y disparan las demás.
+# Es la vuelta del revés de lo obvio, pero es lo que permite
+# garantizar que el sitio seguro cambia en cada tanda
+func elegir_tuberias(prohibidas: Array = []) -> Array:
 	if pipes.is_empty():
 		return []
 
-	var barajadas := pipes.duplicate()
-	barajadas.shuffle()
+	var candidatas : Array = []
+	for t in pipes:
+		if not prohibidas.has(t):
+			candidatas.append(t)
 
-	var cuantas := mini(tuberias_por_tanda, barajadas.size())
-	return barajadas.slice(0, cuantas)
+	# Si las prohibiciones no dejan ninguna, mejor repetir que no disparar
+	if candidatas.is_empty():
+		candidatas = pipes.duplicate()
+
+	var segura = candidatas[randi() % candidatas.size()]
+	ultima_segura = segura
+
+	var disparan : Array = []
+	for t in pipes:
+		if t != segura:
+			disparan.append(t)
+
+	disparan.shuffle()
+	return disparan.slice(0, mini(tuberias_por_tanda, disparan.size()))
 
 
 # Las dos de los extremos, ordenando por su posición en el mundo.
@@ -148,10 +177,25 @@ func tuberias_laterales() -> Array:
 	if pipes.size() < 3:
 		return elegir_tuberias()
 
-	var ordenadas := pipes.duplicate()
-	ordenadas.sort_custom(func(a, b): return a.global_position.x < b.global_position.x)
+	var ordenadas := ordenar_por_x()
+	ultima_segura = tuberia_central()
 
 	return [ordenadas[0], ordenadas[ordenadas.size() - 1]]
+
+
+# La del medio: la que queda a salvo en el ataque lateral
+func tuberia_central() -> PipeChorro:
+	if pipes.size() < 3:
+		return null
+
+	var ordenadas := ordenar_por_x()
+	return ordenadas[ordenadas.size() / 2]
+
+
+func ordenar_por_x() -> Array:
+	var ordenadas := pipes.duplicate()
+	ordenadas.sort_custom(func(a, b): return a.global_position.x < b.global_position.x)
+	return ordenadas
 
 
 func apagar_todas() -> void:
