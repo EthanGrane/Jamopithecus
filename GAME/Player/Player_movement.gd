@@ -72,8 +72,16 @@ var empuje_pendiente : Vector2 = Vector2.ZERO
 var hay_empuje : bool = false
 var pasos : AudioStreamPlayer2D = null
 
+# Sin control: sigue teniendo física, pero no lee los mandos.
+# Lo usan las intros de los boses y cualquier cinemática
+var bloqueado : bool = false
+
 
 func _ready() -> void:
+	# Para que la cámara, los boses y las intros lo encuentren sin
+	# tener que arrastrarlo a mano en cada escena
+	add_to_group("player")
+
 	$Sprite2D.play("idle")
 	preparar_pasos()
 
@@ -104,19 +112,24 @@ func _physics_process(delta: float) -> void:
 	var estaba_en_el_aire := not is_on_floor()
 	var caida := velocity.y
 
-	actualizar_ayudas(delta)
-	actualizar_dash(delta)
-
-	if dasheando:
-		# Durante el dash: línea recta, ni gravedad ni control.
-		# El dash gana a cualquier empuje externo
-		velocity = Vector2(direccion_dash * velocidad_dash, 0.0)
-		hay_empuje = false
+	if bloqueado:
+		# Ni salto ni dash ni mandos: solo se frena y le tira la
+		# gravedad, para que no se quede flotando en el aire
+		frenar_y_caer(delta)
 	else:
-		gestionar_salto()
-		aplicar_gravedad(delta)
-		mover_en_horizontal(delta)
-		aplicar_empuje()
+		actualizar_ayudas(delta)
+		actualizar_dash(delta)
+
+		if dasheando:
+			# Durante el dash: línea recta, ni gravedad ni control.
+			# El dash gana a cualquier empuje externo
+			velocity = Vector2(direccion_dash * velocidad_dash, 0.0)
+			hay_empuje = false
+		else:
+			gestionar_salto()
+			aplicar_gravedad(delta)
+			mover_en_horizontal(delta)
+			aplicar_empuje()
 
 	player_animation()
 	move_and_slide()
@@ -124,10 +137,44 @@ func _physics_process(delta: float) -> void:
 	actualizar_pasos()
 
 
+# ---------------------------------------------------------------
+#  Quitarle el control (intros de boss, cinemáticas, muerte...)
+# ---------------------------------------------------------------
+
+func bloquear(valor: bool) -> void:
+	bloqueado = valor
+
+	if not valor:
+		return
+
+	# Al bloquear se limpia todo lo que estuviera a medias, si no
+	# el jugador recupera el control con un salto o un dash guardado
+	# de hace tres segundos
+	direccion = 0.0
+	buffer_restante = 0.0
+	buffer_dash_restante = 0.0
+	hay_empuje = false
+
+	if dasheando:
+		terminar_dash()
+
+	if pasos != null and pasos.playing:
+		pasos.stop()
+
+
+func frenar_y_caer(delta: float) -> void:
+	var frena = frenada_suelo if is_on_floor() else frenada_aire
+	velocity.x = move_toward(velocity.x, 0.0, frena * delta)
+	aplicar_gravedad(delta)
+
+
 # Lo llaman desde fuera los géiseres de las tuberías. No toca la
 # velocidad directamente a propósito: si lo hiciera, el player la
 # pisaría con su gravedad en el mismo frame según el orden del árbol
 func empujar(velocidad_del_empuje: Vector2) -> void:
+	if bloqueado:
+		return
+
 	empuje_pendiente = velocidad_del_empuje
 	hay_empuje = true
 
@@ -336,6 +383,9 @@ func player_animation():
 
 
 func _input(event: InputEvent) -> void:
+	if bloqueado:
+		return
+
 	if event.is_action_pressed("Decoy"):
 		decoy()
 

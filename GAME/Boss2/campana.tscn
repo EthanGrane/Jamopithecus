@@ -1,18 +1,17 @@
-[gd_scene format=3 uid="uid://8wrn05fo5cht"]
+[gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" uid="uid://d2lsv0jh0lwo8" path="res://GAME/Boss2/campana.gd" id="1_campana"]
+[ext_resource type="Script" path="res://GAME/Boss2/campana.gd" id="1_campana"]
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_icon"]
 
-[sub_resource type="SegmentShape2D" id="SegmentShape2D_aewvb"]
-a = Vector2(0, -45)
-b = Vector2(0, 45)
+[sub_resource type="CircleShape2D" id="CircleShape2D_campana"]
+radius = 40.0
 
-[node name="Campana" type="StaticBody2D" unique_id=149955917]
+[node name="Campana" type="StaticBody2D"]
 script = ExtResource("1_campana")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1042675774]
+[node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.6, 0.6)
 texture = ExtResource("2_icon")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1615358532]
-shape = SubResource("SegmentShape2D_aewvb")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_campana")

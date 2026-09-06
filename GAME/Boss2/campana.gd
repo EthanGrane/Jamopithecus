@@ -62,29 +62,12 @@ func tocar() -> void:
 
 	balancearse()
 
-	# La onda se crea en la escena para que siga existiendo
-	# aunque la campana desaparezca.
+	# La onda cuelga de la escena para que siga aunque la campana
+	# desaparezca, igual que las de los golpes
 	Shockwave.crear(get_tree().current_scene, global_position, radio, fuerza, duracion)
 
 	propagar()
 	tocada.emit()
-
-	caerse()
-
-
-func caerse() -> void:
-	# La campana cae 1000 unidades hacia abajo.
-	var tw := create_tween()
-
-	tw.tween_property(
-		self,
-		"global_position:y",
-		global_position.y + 1000.0,
-		0.8
-	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-
-	# Cuando termina la caída, desaparece.
-	tw.tween_callback(queue_free)
 
 
 func balancearse() -> void:

@@ -7,6 +7,10 @@
 ##	  Con puntos → se mueve por la línea que forman, cambiando de
 ##	               fov de uno a otro.
 ##
+##	Además tiene un "objetivo extra": otro nodo al que mirar sin
+##	dejar de ser la cámara del jugador. Lo usa BossIntro para los
+##	paneos. Se controla con peso_extra, de 0 (jugador) a 1 (el otro).
+##
 ##	El Camera2D va como hijo de este nodo, nunca del Player.
 ##
 
@@ -33,6 +37,17 @@ var adelanto_actual : float = 0.0
 var trauma : float = 0.0
 var caida_del_trauma : float = 4.0
 
+# Paneo. No son @export a propósito: los mueve BossIntro por código
+var objetivo_extra : Node2D = null
+var peso_extra : float = 0.0
+var fov_extra : float = 1.0
+# De dónde sale el paneo. Se guarda al empezar y no es lo mismo que
+# "donde debería estar la cámara": con el suavizado siempre va un
+# poco por detrás del jugador. Si el paneo saliera del sitio teórico
+# en vez del real, daría un tirón en el primer frame
+var paneo_desde : Vector2 = Vector2.ZERO
+var paneo_fov_desde : float = 1.0
+
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -57,17 +72,67 @@ func _physics_process(delta: float) -> void:
 
 	actualizar_adelanto(delta)
 
+	var meta := destino()
+	var f := 1.0 / maxf(fov_actual(), 0.05)
+
+	if hay_paneo():
+		# Durante el paneo la cámara va donde se le dice, sin suavizar.
+		# El suavizado ya lo pone la curva del tween: si además lo
+		# suavizara aquí, el paneo llegaría tarde y no duraría lo
+		# que le has pedido
+		camara.global_position = meta
+		camara.zoom = Vector2(f, f)
+		return
+
 	var suave := suavizar(delta)
-	camara.global_position = camara.global_position.lerp(destino(), suave)
+	camara.global_position = camara.global_position.lerp(meta, suave)
 
 	# En Camera2D más zoom es MÁS cerca, así que el fov es su inverso
-	var z := lerpf(camara.zoom.x, 1.0 / maxf(fov_actual(), 0.05), suave)
+	var z := lerpf(camara.zoom.x, f, suave)
 	camara.zoom = Vector2(z, z)
+
+
+# ---------------------------------------------------------------
+#  Paneo: la API que usa BossIntro
+# ---------------------------------------------------------------
+
+func hay_paneo() -> bool:
+	return objetivo_extra != null and peso_extra > 0.0
+
+
+func mirar_a(nodo: Node2D, fov_del_paneo: float = 1.0) -> void:
+	objetivo_extra = nodo
+	fov_extra = fov_del_paneo
+
+	# El punto de partida es donde está la cámara AHORA MISMO
+	if camara != null:
+		paneo_desde = camara.global_position
+		paneo_fov_desde = 1.0 / maxf(camara.zoom.x, 0.001)
+
+
+func soltar_paneo() -> void:
+	objetivo_extra = null
+	peso_extra = 0.0
+
+	# La cámara ha vuelto a mano hasta el jugador, así que el
+	# seguimiento tiene que continuar desde aquí y no pegar un salto
+	if camara != null:
+		centro = camara.global_position
 
 
 # ---------------------------------------------------------------
 
 func destino() -> Vector2:
+	# Durante el paneo se va del punto guardado al objetivo. Con peso
+	# 0 se queda exactamente donde estaba, así que ni al empezar ni
+	# al volver hay salto: entra y sale por el mismo sitio
+	if hay_paneo():
+		return paneo_desde.lerp(objetivo_extra.global_position, peso_extra)
+
+	return destino_normal()
+
+
+func destino_normal() -> Vector2:
 	var deseado := objetivo.global_position + Vector2(adelanto_actual, 0.0)
 
 	if puntos.size() > 0:
@@ -95,6 +160,13 @@ func destino() -> Vector2:
 
 
 func fov_actual() -> float:
+	if hay_paneo():
+		return lerpf(paneo_fov_desde, fov_extra, peso_extra)
+
+	return fov_normal()
+
+
+func fov_normal() -> float:
 	if puntos.is_empty():
 		return fov
 	return proyectar(objetivo.global_position)[1]

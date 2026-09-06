@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://q3uplb1bqp3f"]
+
+[ext_resource type="Script" uid="uid://btixrfe30ktko" path="res://GAME/BossIntro/boss_intro.gd" id="1_intro"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_intro"]
+size = Vector2(64, 70)
+
+[node name="BossIntro" type="Node2D" unique_id=1179439641]
+script = ExtResource("1_intro")
+
+[node name="Disparador" type="Area2D" parent="." unique_id=657197544]
+collision_layer = 0
+collision_mask = 4294967295
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Disparador" unique_id=1466952459]
+shape = SubResource("RectangleShape2D_intro")

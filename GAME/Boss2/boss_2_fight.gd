@@ -14,6 +14,9 @@
 ##		           salirse de la pantalla. Tocarlo mata: se esquiva
 ##		           dasheando, que te vuelve inmune.
 ##
+##	Si hay un BossIntro apuntando a este nodo, la pelea espera a que
+##	termine el paneo. Si no hay ninguno, arranca sola.
+##
 ##	Dibuja en el editor la franja de agua por la que puede emerger.
 ##
 
@@ -48,7 +51,9 @@ extends Node2D
 @export var mostrar_ruta : bool = true
 @export var color_ruta : Color = Color(1.0, 0.55, 0.2)
 
-var activo : bool = true
+var activo : bool = false
+var arrancada : bool = false
+var esperando_intro : bool = false
 var ultima_segura : PipeChorro = null   # para no repetir el patrón
 
 
@@ -61,6 +66,30 @@ func _ready() -> void:
 		return
 
 	limpiar_tuberias()
+
+	# En diferido: así le da tiempo al BossIntro a decir "quieto" en
+	# su propio _ready. Sin esto dependería del orden del árbol
+	call_deferred("arrancar_si_toca")
+
+
+# La llama BossIntro al cargar la escena. Es lo que evita tener que
+# acordarse de desmarcar una casilla en el Inspector
+func esperar_intro() -> void:
+	esperando_intro = true
+
+
+func arrancar_si_toca() -> void:
+	if not esperando_intro:
+		empezar()
+
+
+# La llama BossIntro al terminar el paneo
+func empezar() -> void:
+	if arrancada:
+		return
+
+	arrancada = true
+	activo = true
 	bucle()
 
 

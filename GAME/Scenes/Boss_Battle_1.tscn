@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="4_788jl"]
 [ext_resource type="PackedScene" path="res://GAME/Camera/camera_dolly.tscn" id="4_xnh4b"]
 [ext_resource type="Script" uid="uid://cadogbi750bcf" path="res://GAME/Camera/dolly_point.gd" id="7_788jl"]
+[ext_resource type="PackedScene" uid="uid://q3uplb1bqp3f" path="res://GAME/BossIntro/boss_intro.tscn" id="8_rd6jl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8ptxo"]
 texture = ExtResource("2_8ptxo")
@@ -232,3 +233,15 @@ position = Vector2(1200, 514)
 
 [node name="Marker2D4" type="Marker2D" parent="_SpearsPoints" unique_id=704088291 groups=["spear_points"]]
 position = Vector2(399, 511)
+
+[node name="BossIntro" parent="." unique_id=1314235869 node_paths=PackedStringArray("mirar_a", "dormidos", "pelea") instance=ExtResource("8_rd6jl")]
+position = Vector2(732, 277)
+rotation = -3.1415925
+scale = Vector2(1, 10)
+mirar_a = NodePath("../Boos_1")
+dormidos = [NodePath("../Boos_1")]
+pelea = NodePath("..")
+retardo = 0.5
+duracion_ida = 1.0
+espera_mirando = 2.0
+duracion_vuelta = 1.0
