@@ -9,7 +9,8 @@ var text := [
 	{"texto" : "Una rana le ataco con su lengua, arrevatandole sus preciadas alas", "imagen" : preload("res://GAME/Scenes/Into_scene/Rana.png")},
 	{"texto" : "Tilín lo había perdido todo, ya no le quedaba ninguna razón para vivir. ¿Qué es una mosca sin sus alas? ", "imagen" : preload("res://GAME/Scenes/Into_scene/Rana.png")},
 	{"texto" : "Pero aún le quedaba solo una cosa que hacer", "imagen" : preload("res://GAME/Scenes/Into_scene/Tilin1.png")},
-	{"texto" : "[center][color=red][shake rate=30 level=12]Matar a esa puta Rana[/shake][color=red]", "imagen" : preload("res://GAME/Scenes/Into_scene/Tilin1.png")}
+	{"texto" : "[center][color=red][shake rate=30 level=12]Matar a esa puta Rana[/shake][color=red]", "imagen" : preload("res://GAME/Scenes/Into_scene/Tilin1.png")},
+	{"texto" : "EL", "imagen" : null}
 ]
 
 
@@ -19,8 +20,13 @@ func _ready() -> void:
 	
 func process_dialogue():
 	label.visible_ratio = 0
+	if text[n_dialogue].texto == "EL":
+		$Sprite2D.visible = false
+		await get_tree().create_timer(3.0).timeout
+		get_tree().change_scene_to_file("res://GAME/Scenes/Escena_Inicial.tscn")
 	label.text = text[n_dialogue].texto
-	$Sprite2D.texture = text[n_dialogue].imagen
+	if text[n_dialogue].imagen != null:
+		$Sprite2D.texture = text[n_dialogue].imagen
 	var read_time = float(label.text.length() / 14.0)
 	var tween : Tween
 	tween = create_tween()

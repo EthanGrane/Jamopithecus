@@ -1,0 +1,7 @@
+[gd_resource type="Theme" format=3 uid="uid://c8nj1l2bra1oj"]
+
+[ext_resource type="FontFile" uid="uid://dj3dko4qnyq34" path="res://Extras/DTM-Mono.otf" id="1_0jvja"]
+
+[resource]
+RichTextLabel/font_sizes/normal_font_size = 40
+RichTextLabel/fonts/normal_font = ExtResource("1_0jvja")

@@ -225,4 +225,6 @@ offset_bottom = 1085.0
 [node name="Control" parent="." unique_id=670822125 instance=ExtResource("9_scnww")]
 position = Vector2(-2475, 550)
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1727467446]
+
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

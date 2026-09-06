@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://0jjgxvunwygs" path="res://GAME/Scenes/Into_scene/Intro_scene.gd" id="1_hqbqb"]
 [ext_resource type="FontFile" uid="uid://dj3dko4qnyq34" path="res://Extras/DTM-Mono.otf" id="2_espee"]
+[ext_resource type="AudioStream" uid="uid://clkt1w5p7weqe" path="res://Extras/Intro.mp3" id="3_espee"]
 
 [sub_resource type="Theme" id="Theme_n6f3l"]
 RichTextLabel/font_sizes/normal_font_size = 40
@@ -11,7 +12,7 @@ RichTextLabel/fonts/italics_font = ExtResource("2_espee")
 RichTextLabel/fonts/mono_font = ExtResource("2_espee")
 RichTextLabel/fonts/normal_font = ExtResource("2_espee")
 
-[node name="Intro_scene" type="Control" unique_id=1512746864]
+[node name="Intro_scene2" type="Control" unique_id=1512746864]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -49,3 +50,8 @@ grow_vertical = 2
 theme = SubResource("Theme_n6f3l")
 bbcode_enabled = true
 autowrap_mode = 2
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1754235634]
+stream = ExtResource("3_espee")
+volume_db = -1.21
+autoplay = true

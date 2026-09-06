@@ -8,12 +8,27 @@
 [ext_resource type="Texture2D" uid="uid://c4kqi2mmagtf5" path="res://GAME/icons/keyboard_c.png" id="6_ns5kd"]
 [ext_resource type="Shader" uid="uid://dw8ieris4q5gd" path="res://Extras/Gray.gdshader" id="7_mualq"]
 [ext_resource type="Texture2D" uid="uid://bq8shysaj4qwn" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump7.png" id="8_8m6w2"]
+[ext_resource type="Texture2D" uid="uid://26k0sc2c5rtg" path="res://GAME/Player/Walker_sprite.png" id="9_k623k"]
+[ext_resource type="Texture2D" uid="uid://cupurknw3mm4q" path="res://GAME/Player/Sprites/Walk/Walker_Walk2.png" id="10_ns5kd"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sjokf"]
 shader = ExtResource("7_mualq")
 shader_parameter/gray_amount = 1.0
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bd4on"]
+shader = ExtResource("7_mualq")
+shader_parameter/gray_amount = 1.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ppbye"]
+atlas = ExtResource("9_k623k")
+region = Rect2(61, 30.25, 17.5, 33)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_63o18"]
+shader = ExtResource("7_mualq")
+shader_parameter/gray_amount = 1.0
+
 [node name="Control" type="Node2D" unique_id=670822125]
+z_index = -5
 metadata/_edit_lock_ = true
 
 [node name="KeyboardArrowLeft" type="Sprite2D" parent="." unique_id=1580923910]
@@ -52,3 +67,17 @@ material = SubResource("ShaderMaterial_sjokf")
 position = Vector2(297.00003, -51)
 scale = Vector2(2.0833325, 2.0833325)
 texture = ExtResource("8_8m6w2")
+
+[node name="WalkerSprite" type="Sprite2D" parent="." unique_id=1649621348]
+texture_filter = 1
+material = SubResource("ShaderMaterial_bd4on")
+position = Vector2(399, -65)
+scale = Vector2(2.8118627, 2.8118625)
+texture = SubResource("AtlasTexture_ppbye")
+
+[node name="WalkerWalk2" type="Sprite2D" parent="." unique_id=1139456741]
+texture_filter = 1
+material = SubResource("ShaderMaterial_63o18")
+position = Vector2(492, -59)
+scale = Vector2(2.1524377, 2.152437)
+texture = ExtResource("10_ns5kd")
