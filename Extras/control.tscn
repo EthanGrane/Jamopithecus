@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://d3f4ojsowsnco"]
+
+[ext_resource type="Texture2D" uid="uid://kqk6abpu3uvq" path="res://GAME/icons/keyboard_arrow_left.png" id="1_4otke"]
+[ext_resource type="Texture2D" uid="uid://dnfhq2f42xt4i" path="res://GAME/icons/keyboard_arrow_right.png" id="2_sjokf"]
+[ext_resource type="Texture2D" uid="uid://do2167oovsdbc" path="res://GAME/icons/keyboard_arrow_down.png" id="3_8m6w2"]
+[ext_resource type="Texture2D" uid="uid://dl7hykdq8bqwv" path="res://GAME/icons/keyboard_x.png" id="4_mualq"]
+[ext_resource type="Texture2D" uid="uid://bnhq2ejkuqehn" path="res://GAME/icons/keyboard_z.png" id="5_k623k"]
+[ext_resource type="Texture2D" uid="uid://c4kqi2mmagtf5" path="res://GAME/icons/keyboard_c.png" id="6_ns5kd"]
+[ext_resource type="Shader" uid="uid://dw8ieris4q5gd" path="res://Extras/Gray.gdshader" id="7_mualq"]
+[ext_resource type="Texture2D" uid="uid://bq8shysaj4qwn" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump7.png" id="8_8m6w2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sjokf"]
+shader = ExtResource("7_mualq")
+shader_parameter/gray_amount = 1.0
+
+[node name="Control" type="Node2D" unique_id=670822125]
+metadata/_edit_lock_ = true
+
+[node name="KeyboardArrowLeft" type="Sprite2D" parent="." unique_id=1580923910]
+texture_filter = 1
+texture = ExtResource("1_4otke")
+
+[node name="KeyboardArrowRight" type="Sprite2D" parent="." unique_id=672038497]
+texture_filter = 1
+position = Vector2(100, 0)
+texture = ExtResource("2_sjokf")
+
+[node name="KeyboardArrowDown" type="Sprite2D" parent="." unique_id=1201444044]
+texture_filter = 1
+position = Vector2(50, -60)
+scale = Vector2(1, -1)
+texture = ExtResource("3_8m6w2")
+
+[node name="KeyboardX" type="Sprite2D" parent="." unique_id=554119831]
+texture_filter = 1
+position = Vector2(400, 0)
+texture = ExtResource("4_mualq")
+
+[node name="KeyboardZ" type="Sprite2D" parent="." unique_id=1599804383]
+texture_filter = 1
+position = Vector2(300, 0)
+texture = ExtResource("5_k623k")
+
+[node name="KeyboardC" type="Sprite2D" parent="." unique_id=66604811]
+texture_filter = 1
+position = Vector2(500, 0)
+texture = ExtResource("6_ns5kd")
+
+[node name="WalkerJump3" type="Sprite2D" parent="." unique_id=507435401]
+texture_filter = 1
+material = SubResource("ShaderMaterial_sjokf")
+position = Vector2(297.00003, -51)
+scale = Vector2(2.0833325, 2.0833325)
+texture = ExtResource("8_8m6w2")
