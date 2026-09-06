@@ -197,7 +197,7 @@ position = Vector2(0, 3)
 shape = SubResource("RectangleShape2D_vhxjs")
 
 [node name="Sprite2D" type="Sprite2D" parent="Mano" unique_id=1137071451]
-position = Vector2(-15, 74)
+position = Vector2(-173, 78)
 scale = Vector2(1, 0.4960938)
 texture = ExtResource("2_meq13")
 
