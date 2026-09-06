@@ -228,7 +228,7 @@ func _process(delta: float) -> void:
 [sub_resource type="CircleShape2D" id="CircleShape2D_spnxy"]
 radius = 34.234486
 
-[node name="Mosca" type="CharacterBody2D" unique_id=1289701118]
+[node name="Mosca" type="CharacterBody2D" unique_id=1289701118 groups=["Mosca"]]
 script = ExtResource("1_28m6o")
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=215833921]

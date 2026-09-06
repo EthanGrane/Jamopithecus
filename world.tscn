@@ -3,8 +3,7 @@
 [ext_resource type="Script" uid="uid://coagpgysfd7j2" path="res://world.gd" id="1_aqk2v"]
 [ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="2_036b0"]
 [ext_resource type="PackedScene" uid="uid://dhqdggwgoh3yy" path="res://GAME/Scenes/Boss_Battle_1.tscn" id="3_dwbse"]
-[ext_resource type="PackedScene" uid="uid://b56rpd4nnfnh0" path="res://GAME/Scenes/Boss_Battle_2.tscn" id="4_pkg7o"]
-
+[ext_resource type="PackedScene" uid="uid://0o6mivhqq8g2" path="res://GAME/Boss_3/lengua.tscn" id="5_036b0"]
 
 [node name="World" type="Node2D" unique_id=2125391229 node_paths=PackedStringArray("the_player")]
 position = Vector2(20, -34)
@@ -17,6 +16,6 @@ position = Vector2(167, 466)
 [node name="BossBattle1" parent="." unique_id=1682470945 instance=ExtResource("3_dwbse")]
 position = Vector2(1887, 79)
 
-[node name="Boss_2_fight" parent="." unique_id=947395531 node_paths=PackedStringArray("pipes") instance=ExtResource("4_pkg7o")]
-position = Vector2(4712, 238)
-pipes = [NodePath("Pipe2"), NodePath("Pipe3"), null]
+[node name="Lengua" parent="." unique_id=939130365 node_paths=PackedStringArray("get_player") instance=ExtResource("5_036b0")]
+position = Vector2(2110, 326)
+get_player = NodePath("../Mosca")

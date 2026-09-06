@@ -3,9 +3,13 @@
 [ext_resource type="Script" uid="uid://0jjgxvunwygs" path="res://GAME/Scenes/Into_scene/Intro_scene.gd" id="1_hqbqb"]
 [ext_resource type="FontFile" uid="uid://dj3dko4qnyq34" path="res://Extras/DTM-Mono.otf" id="2_espee"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_5sv2w"]
-font = ExtResource("2_espee")
-font_size = 42
+[sub_resource type="Theme" id="Theme_n6f3l"]
+RichTextLabel/font_sizes/normal_font_size = 40
+RichTextLabel/fonts/bold_font = ExtResource("2_espee")
+RichTextLabel/fonts/bold_italics_font = ExtResource("2_espee")
+RichTextLabel/fonts/italics_font = ExtResource("2_espee")
+RichTextLabel/fonts/mono_font = ExtResource("2_espee")
+RichTextLabel/fonts/normal_font = ExtResource("2_espee")
 
 [node name="Intro_scene" type="Control" unique_id=1512746864]
 layout_mode = 3
@@ -31,7 +35,7 @@ offset_bottom = -0.056030273
 color = Color(0, 0, 0, 1)
 metadata/_edit_lock_ = true
 
-[node name="Label" type="Label" parent="." unique_id=332086446]
+[node name="Label" type="RichTextLabel" parent="." unique_id=782580594]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -42,5 +46,6 @@ offset_right = -51.0
 offset_bottom = -26.0
 grow_horizontal = 2
 grow_vertical = 2
-label_settings = SubResource("LabelSettings_5sv2w")
+theme = SubResource("Theme_n6f3l")
+bbcode_enabled = true
 autowrap_mode = 2

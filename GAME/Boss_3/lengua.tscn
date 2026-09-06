@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://0o6mivhqq8g2"]
+
+[ext_resource type="Script" uid="uid://epqvcn4twdb3" path="res://GAME/Boss_3/lengua.gd" id="1_fs46j"]
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_em5c8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
+size = Vector2(20, 19.25)
+
+[node name="Lengua" type="StaticBody2D" unique_id=939130365]
+script = ExtResource("1_fs46j")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="." unique_id=300210767]
+offset_left = 22.0
+offset_top = 12.0
+offset_right = 42.0
+offset_bottom = 31.0
+texture = ExtResource("2_em5c8")
+region_rect = Rect2(0, 0, 128, 128)
+patch_margin_left = 10
+patch_margin_right = 10
+
+[node name="Area2D" type="Area2D" parent="." unique_id=82452236 groups=["Boss"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=147270544]
+position = Vector2(32, 21)
+shape = SubResource("RectangleShape2D_5sv2w")
+
+[node name="Timer" type="Timer" parent="." unique_id=593036563]
+wait_time = 4.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

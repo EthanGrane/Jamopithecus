@@ -1,0 +1,161 @@
+[gd_scene format=3 uid="uid://dyuh5jtiu0euf"]
+
+[ext_resource type="Script" uid="uid://betfg467s8i3v" path="res://GAME/Boss_3/boss_3.gd" id="1_m5sub"]
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_meq13"]
+[ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="3_df6y5"]
+[ext_resource type="PackedScene" uid="uid://b27scjcd6tswn" path="res://GAME/HealthSystem/hitbox_component.tscn" id="4_so0l5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
+size = Vector2(166.5, 215.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hreux"]
+size = Vector2(169, 20)
+
+[sub_resource type="Animation" id="Animation_m5sub"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_meq13"]
+resource_name = "Vuelta"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 3.1415927]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.73333335, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(-34, -43), Vector2(0, -100), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_so0l5"]
+resource_name = "default"
+
+[sub_resource type="Animation" id="Animation_df6y5"]
+resource_name = "volver_vuelta"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [3.1415927, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.43333334, 0.76666665, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(6, -535), Vector2(6, -535), Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_df6y5"]
+_data = {
+&"RESET": SubResource("Animation_m5sub"),
+&"Vuelta": SubResource("Animation_meq13"),
+&"default": SubResource("Animation_so0l5"),
+&"volver_vuelta": SubResource("Animation_df6y5")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vhxjs"]
+size = Vector2(118.000015, 55.999996)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mjaej"]
+size = Vector2(121.5, 60.000004)
+
+[node name="Boss_3" type="StaticBody2D" unique_id=508595398]
+script = ExtResource("1_m5sub")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1737285601]
+position = Vector2(-2, 1)
+scale = Vector2(1.3710938, 1.765625)
+texture = ExtResource("2_meq13")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=613802069]
+position = Vector2(2, 0)
+shape = SubResource("RectangleShape2D_5sv2w")
+
+[node name="HealthComponent" parent="." unique_id=654470910 instance=ExtResource("3_df6y5")]
+position = Vector2(-1, 3)
+
+[node name="HitboxComponent" parent="." unique_id=1078440589 instance=ExtResource("4_so0l5")]
+position = Vector2(-6, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent" unique_id=306663325]
+position = Vector2(7, 101)
+shape = SubResource("RectangleShape2D_hreux")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=2040487711]
+libraries/ = SubResource("AnimationLibrary_df6y5")
+
+[node name="Mano" type="StaticBody2D" parent="." unique_id=572139235]
+
+[node name="Area2D" type="Area2D" parent="Mano" unique_id=1096637585]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Mano/Area2D" unique_id=147165608]
+position = Vector2(184, 82)
+shape = SubResource("RectangleShape2D_vhxjs")
+
+[node name="Sprite2D" type="Sprite2D" parent="Mano" unique_id=1137071451]
+position = Vector2(186, 80)
+scale = Vector2(1, 0.4960938)
+texture = ExtResource("2_meq13")
+
+[node name="Mano2" type="StaticBody2D" parent="." unique_id=70926647]
+
+[node name="Area2D" type="Area2D" parent="Mano2" unique_id=1723118307]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Mano2/Area2D" unique_id=1011711542]
+position = Vector2(-193, 76)
+shape = SubResource("RectangleShape2D_mjaej")
+
+[node name="Sprite2D" type="Sprite2D" parent="Mano2" unique_id=1595609737]
+position = Vector2(-195, 75)
+scale = Vector2(1, 0.4960938)
+texture = ExtResource("2_meq13")
