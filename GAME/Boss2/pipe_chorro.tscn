@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://dfsnygyb73yt2"]
 
 [ext_resource type="Script" uid="uid://phgd4kgiixvx" path="res://GAME/Boss2/pipe_chorro.gd" id="1_chorro"]
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_vtcfx"]
 [ext_resource type="Texture2D" uid="uid://bnxjhongvq2cq" path="res://GAME/Boss2/Bubble.png" id="3_db5vw"]
+[ext_resource type="Texture2D" uid="uid://drujfk04wdwwp" path="res://GAME/Boss2/Pipe.png" id="3_k7ift"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
 size = Vector2(371, 111)
@@ -21,11 +21,6 @@ light_mask = 3
 visibility_layer = 2
 position = Vector2(175, 39)
 shape = SubResource("RectangleShape2D_5sv2w")
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=370563080]
-position = Vector2(176.99998, 43.499996)
-scale = Vector2(2.9531248, 0.8671875)
-texture = ExtResource("2_vtcfx")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=787522169]
 
@@ -57,5 +52,17 @@ initial_velocity_max = 220.0
 scale_amount_min = 0.3
 scale_amount_max = 1.1
 color = Color(0.7, 0.92, 1, 0.7)
+
+[node name="Sprite2D" type="NinePatchRect" parent="." unique_id=2076689239]
+texture_filter = 1
+offset_left = -15.000002
+offset_top = 101.0
+offset_right = 24.999998
+offset_bottom = 226.86845
+rotation = -1.5707964
+scale = Vector2(3, 3)
+texture = ExtResource("3_k7ift")
+region_rect = Rect2(64, 47, 65, 65)
+patch_margin_top = 18
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

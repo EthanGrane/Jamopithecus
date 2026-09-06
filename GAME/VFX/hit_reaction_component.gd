@@ -95,7 +95,8 @@ func restablecer() -> void:
 func destello() -> void:
 	if sprite == null or sprite.material == null:
 		return
-
+	if get_parent().has_method("play_hurt"):
+		get_parent().play_hurt()
 	poner_blanco(1.0)
 	var tw := create_tween()
 	tw.tween_method(poner_blanco, 1.0, 0.0, destello_duracion)

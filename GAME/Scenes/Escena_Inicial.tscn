@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://cadogbi750bcf" path="res://GAME/Camera/dolly_point.gd" id="6_q4g1a"]
 [ext_resource type="PackedScene" uid="uid://fbjgye8ct80e" path="res://GAME/Water/agua.tscn" id="8_eupud"]
 [ext_resource type="PackedScene" uid="uid://d3f4ojsowsnco" path="res://Extras/control.tscn" id="9_scnww"]
+[ext_resource type="AudioStream" uid="uid://beiihbajnk5pc" path="res://Extras/Menu.mp3" id="10_bmpeg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_q4g1a"]
 texture = ExtResource("1_6d15y")
@@ -226,5 +227,8 @@ offset_bottom = 1085.0
 position = Vector2(-2475, 550)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1727467446]
+stream = ExtResource("10_bmpeg")
+volume_db = -11.0
+autoplay = true
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

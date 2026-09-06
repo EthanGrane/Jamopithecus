@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bj6ortxtfsb0q"]
 
 [ext_resource type="Script" uid="uid://cb8csqu7lpwno" path="res://GAME/Boss1/pipe.gd" id="1_k7yxf"]
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_vtcfx"]
+[ext_resource type="Texture2D" uid="uid://drujfk04wdwwp" path="res://GAME/Boss2/Pipe.png" id="2_k7yxf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
 size = Vector2(360.5, 111)
@@ -18,16 +18,23 @@ visibility_layer = 2
 position = Vector2(180.25, 39)
 shape = SubResource("RectangleShape2D_5sv2w")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=320352643]
-position = Vector2(176.99998, 43.499996)
-scale = Vector2(2.9531248, 0.8671875)
-texture = ExtResource("2_vtcfx")
-
 [node name="Area2D" type="Area2D" parent="." unique_id=1731586091]
 collision_mask = 7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1051395172]
 position = Vector2(32.5, 43.5)
 shape = SubResource("RectangleShape2D_spnxy")
+
+[node name="Sprite2D" type="NinePatchRect" parent="." unique_id=327127624]
+texture_filter = 1
+offset_left = -5.0
+offset_top = 102.0
+offset_right = 35.0
+offset_bottom = 222.51819
+rotation = -1.5707964
+scale = Vector2(3, 3)
+texture = ExtResource("2_k7yxf")
+region_rect = Rect2(64, 47, 65, 65)
+patch_margin_top = 18
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

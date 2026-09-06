@@ -67,6 +67,7 @@ var capa_original : int = 0
 
 
 func _ready() -> void:
+	$AnimatedSprite2D.play("default")
 	capa_original = collision_layer
 	mascara_original = collision_mask
 	velocidad = randf_range(velocidad_min, velocidad_max)
@@ -133,7 +134,11 @@ func _physics_process(delta: float) -> void:
 	# Huyendo no le afecta la gravedad: va en línea recta a su tubería
 	if estado != Estado.HUYENDO:
 		aplicar_gravedad(delta)
-
+	
+	if velocity.x > 0:
+		$AnimatedSprite2D.flip_h = true
+	elif velocity.x < 0:
+		$AnimatedSprite2D.flip_h = false
 	move_and_slide()
 
 	# Si choca con una pared se da la vuelta y sigue rodando
@@ -349,6 +354,9 @@ func aturdir() -> void:
 
 func estar_aturdido(delta: float) -> void:
 	velocity.x = 0.0
+	if $AnimatedSprite2D.animation != "Hit":
+		sprite.visible = false
+		$AnimatedSprite2D.play("Hit")
 	contador_aturdido -= delta
 	if contador_aturdido <= 0.0:
 		terminar_aturdimiento()
@@ -368,6 +376,8 @@ func terminar_aturdimiento() -> void:
 
 
 func volver_a_ser_vulnerable() -> void:
+	sprite.visible = true
+	$AnimatedSprite2D.play("default")
 	salud.invulnerable = false
 	set_deferred("collision_mask", mascara_original)
 	modulate.a = 1.0

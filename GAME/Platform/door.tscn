@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://du61ija3hdtfw"]
 
 [ext_resource type="Script" uid="uid://bulmqpvfdkw35" path="res://GAME/Platform/door.gd" id="1_kwadb"]
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_hlys3"]
+[ext_resource type="Texture2D" uid="uid://bqqtraskadrxr" path="res://GAME/Tiles/Tile1.png" id="2_hw236"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_spnxy"]
 size = Vector2(20, 111)
@@ -9,29 +9,48 @@ size = Vector2(20, 111)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hreux"]
 size = Vector2(22, 127)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_phimj"]
+atlas = ExtResource("2_hw236")
+region = Rect2(32, 64, 16, 16)
+
 [node name="Door" type="StaticBody2D" unique_id=644828058]
 script = ExtResource("1_kwadb")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1628519410]
 z_index = 7
 
-[node name="Sprite2D" type="Sprite2D" parent="Area2D" unique_id=1918063164]
-position = Vector2(402, 16)
-scale = Vector2(0.16406259, 0.8828125)
-texture = ExtResource("2_hlys3")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=315554589]
-position = Vector2(401, 15)
+position = Vector2(401, 14)
 shape = SubResource("RectangleShape2D_spnxy")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=547792041]
-position = Vector2(413, 242)
-scale = Vector2(0.19140601, 1)
-texture = ExtResource("2_hlys3")
+[node name="ColorRect" type="ColorRect" parent="Area2D/CollisionShape2D" unique_id=1545603119]
+offset_left = -10.0
+offset_top = -55.0
+offset_right = -7.0
+offset_bottom = 57.0
+
+[node name="ColorRect2" type="ColorRect" parent="Area2D/CollisionShape2D" unique_id=646287155]
+offset_left = -7.0
+offset_top = -55.0
+offset_right = -4.0
+offset_bottom = 57.0
+color = Color(0.8577002, 0, 0.27268606, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="Area2D/CollisionShape2D" unique_id=2075232139]
+offset_left = -4.0
+offset_top = -55.0
+offset_right = -1.0
+offset_bottom = 57.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1735117589]
 z_index = -2
 position = Vector2(413, 241.5)
 shape = SubResource("RectangleShape2D_hreux")
+
+[node name="Sprite2D2" type="Sprite2D" parent="." unique_id=1200848260]
+texture_filter = 1
+position = Vector2(413.5, 241.88281)
+scale = Vector2(1.437502, 8.2353525)
+texture = SubResource("AtlasTexture_phimj")
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]

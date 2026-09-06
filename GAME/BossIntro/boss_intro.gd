@@ -25,7 +25,6 @@
 
 @tool
 extends Node2D
-class_name BossIntro
 
 signal intro_terminada
 

@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://b56rpd4nnfnh0"]
 
 [ext_resource type="Script" uid="uid://2renwy4hgh0d" path="res://GAME/Boss2/boss_2_fight.gd" id="1_cf3t6"]
-[ext_resource type="PackedScene" path="res://GAME/Boss2/pipe_chorro.tscn" id="2_sfy6l"]
+[ext_resource type="PackedScene" uid="uid://dfsnygyb73yt2" path="res://GAME/Boss2/pipe_chorro.tscn" id="2_sfy6l"]
 [ext_resource type="PackedScene" uid="uid://ch6ehihn3ebbx" path="res://GAME/Boss2/renacuajo.tscn" id="3_hbjp0"]
 [ext_resource type="Texture2D" uid="uid://bqqtraskadrxr" path="res://GAME/Tiles/Tile1.png" id="3_rmext"]
 [ext_resource type="PackedScene" uid="uid://fbjgye8ct80e" path="res://GAME/Water/agua.tscn" id="4_rmext"]
@@ -10,7 +10,7 @@
 [ext_resource type="Script" uid="uid://cadogbi750bcf" path="res://GAME/Camera/dolly_point.gd" id="8_rmext"]
 [ext_resource type="PackedScene" uid="uid://8wrn05fo5cht" path="res://GAME/Boss2/campana.tscn" id="9_df78p"]
 [ext_resource type="AudioStream" uid="uid://c043qrkcvkk2o" path="res://GAME/SFX/BellHit.wav" id="10_aewvb"]
-[ext_resource type="PackedScene" path="res://GAME/BossIntro/boss_intro.tscn" id="11_cige2"]
+[ext_resource type="PackedScene" uid="uid://q3uplb1bqp3f" path="res://GAME/BossIntro/boss_intro.tscn" id="11_cige2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_df78p"]
 texture = ExtResource("3_rmext")

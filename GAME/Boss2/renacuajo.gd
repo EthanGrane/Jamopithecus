@@ -57,12 +57,13 @@ var direccion_embiste : Vector2 = Vector2.RIGHT
 var capa_original : int = 1
 var mascara_original : int = 1
 
-@onready var sprite : Sprite2D = $Sprite2D
+@onready var sprite : AnimatedSprite2D = $Sprite2D
 @onready var reaccion : HitReactionComponent = $HitReactionComponent
 @onready var contacto : CollisionShape2D = $Contacto/CollisionShape2D
 
 
 func _ready() -> void:
+	$Sprite2D.play("default")
 	capa_original = collision_layer
 	mascara_original = collision_mask if collision_mask != 0 else 1
 
@@ -298,3 +299,7 @@ func buscar_por_clase(nodo: Node) -> Node2D:
 			return encontrado
 
 	return null
+
+func play_hurt():
+	$Sprite2D.play("Hurt")
+	$Sprite2D.animation_finished.connect(func(): $Sprite2D.play("default"))

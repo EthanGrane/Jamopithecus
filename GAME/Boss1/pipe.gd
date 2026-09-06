@@ -41,7 +41,7 @@ class_name Pipe
 @export var escala_al_tragar : Vector2 = Vector2(0.72, 1.08)
 @export var duracion_al_tragar : float = 0.28
 
-@onready var sprite : Sprite2D = $Sprite2D
+@onready var sprite : NinePatchRect = $Sprite2D
 @onready var boca : CollisionShape2D = $Area2D/CollisionShape2D
 
 var posicion_original : Vector2 = Vector2.ZERO

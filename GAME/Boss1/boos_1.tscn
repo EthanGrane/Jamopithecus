@@ -1,11 +1,26 @@
 [gd_scene format=3 uid="uid://e7ibnnthjk0k"]
 
 [ext_resource type="Script" uid="uid://sq8n4awd0l00" path="res://GAME/Boss1/boos_1.gd" id="1_8mmf7"]
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_ynxwx"]
 [ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="3_2tfwi"]
+[ext_resource type="Texture2D" uid="uid://xadp62eyvsnr" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll1.png" id="3_pv43l"]
 [ext_resource type="Shader" uid="uid://bflnudy0jy0h0" path="res://GAME/VFX/hit_flash.gdshader" id="4_flash"]
 [ext_resource type="PackedScene" path="res://GAME/VFX/hit_reaction_component.tscn" id="5_hit"]
 [ext_resource type="AudioStream" uid="uid://bsqy1lnvmf87w" path="res://GAME/SFX/Spear_HitFlesh.wav" id="6_sfx"]
+[ext_resource type="Texture2D" uid="uid://c7er01gpdjsxw" path="res://GAME/Boss1/Güevo_Hurt/Cuajo_Hurt2.png" id="7_fmbc0"]
+[ext_resource type="Texture2D" uid="uid://ckad1kdswjxw0" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll2.png" id="7_ia1g1"]
+[ext_resource type="Texture2D" uid="uid://b44tmdn22ga77" path="res://GAME/Boss1/Güevo_Hurt/Cuajo_Hurt3.png" id="8_13nj3"]
+[ext_resource type="Texture2D" uid="uid://dxccfhf0477tn" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll3.png" id="8_p8sx8"]
+[ext_resource type="Texture2D" uid="uid://6t7oqaugticq" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll4.png" id="9_h5csf"]
+[ext_resource type="Texture2D" uid="uid://gkapx2fagvru" path="res://GAME/Boss1/Güevo_Hurt/Cuajo_Hurt4.png" id="9_nc5ij"]
+[ext_resource type="Texture2D" uid="uid://bypyv4cdexli8" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll5.png" id="10_ea5p4"]
+[ext_resource type="Texture2D" uid="uid://uv2i0yrpywsg" path="res://GAME/Boss1/Güevo_Hurt/Cuajo_Hurt5.png" id="10_tygsj"]
+[ext_resource type="Texture2D" uid="uid://cbema4ge8tnj7" path="res://GAME/Boss1/Güevo_Hurt/Cuajo_Hurt6.png" id="11_t6uor"]
+[ext_resource type="Texture2D" uid="uid://bce58t245kick" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll6.png" id="11_tjjdb"]
+[ext_resource type="Texture2D" uid="uid://dsrbs6iwjr7qd" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll7.png" id="12_5qtht"]
+[ext_resource type="Texture2D" uid="uid://dfrkvpp4k1ja2" path="res://GAME/Boss1/Güevo_Hurt/Cuajo_Hurt7.png" id="12_7s04b"]
+[ext_resource type="Texture2D" uid="uid://xmfh3a7wb45" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll8.png" id="13_x8m5e"]
+[ext_resource type="Texture2D" uid="uid://1bcu8yt8ppyw" path="res://GAME/Boss1/Güevo_Roll/Güevo_Roll9.png" id="14_1f427"]
+[ext_resource type="Texture2D" uid="uid://dlkosx815liqv" path="res://GAME/Boss1/Güevo_Hurt/Cuajo_Hurt1.png" id="21_kq668"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_flash"]
 resource_local_to_scene = true
@@ -16,15 +31,98 @@ shader_parameter/color_flash = Color(1, 1, 1, 1)
 [sub_resource type="CircleShape2D" id="CircleShape2D_p8y83"]
 radius = 45.099888
 
+[sub_resource type="SpriteFrames" id="SpriteFrames_3f4cp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_fmbc0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_13nj3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_nc5ij")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_tygsj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_t6uor")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_7s04b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_fmbc0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_13nj3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_nc5ij")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_tygsj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_t6uor")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_7s04b")
+}],
+"loop": 1,
+"name": &"Hit",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_ia1g1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_p8sx8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_h5csf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_ea5p4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_tjjdb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_5qtht")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_x8m5e")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_1f427")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("21_kq668")
+}],
+"loop": 1,
+"name": &"interval",
+"speed": 5.0
+}]
+
 [node name="Boos_1" type="CharacterBody2D" unique_id=200607943 groups=["Boss", "Enemy"]]
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_8mmf7")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1918290784]
+texture_filter = 1
 material = SubResource("ShaderMaterial_flash")
-scale = Vector2(0.7588074, 0.7588074)
-texture = ExtResource("2_ynxwx")
+position = Vector2(3, -1.0000019)
+scale = Vector2(1.4247019, 1.4247019)
+texture = ExtResource("3_pv43l")
 
 [node name="HealthComponent" parent="." unique_id=654470910 instance=ExtResource("3_2tfwi")]
 
@@ -33,3 +131,10 @@ sonido = ExtResource("6_sfx")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1440069700]
 shape = SubResource("CircleShape2D_p8y83")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=550684555]
+texture_filter = 1
+position = Vector2(1, -10)
+scale = Vector2(1.4699999, 1.4699999)
+sprite_frames = SubResource("SpriteFrames_3f4cp")
+animation = &"Hit"
