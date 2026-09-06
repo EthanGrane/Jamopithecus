@@ -38,7 +38,7 @@ theme = ExtResource("2_m84vs")
 bbcode_enabled = true
 autowrap_mode = 2
 
-[node name="TextureRect" type="Sprite2D" parent="." unique_id=481612338]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=481612338]
 texture_filter = 1
 position = Vector2(580, 184)
 scale = Vector2(3.3883095, 3.3883097)
