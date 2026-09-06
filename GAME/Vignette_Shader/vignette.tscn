@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://dano8ctukcbm2"]
+
+[node name="Vignette" type="ColorRect" unique_id=542166435]
+offset_right = 40.0
+offset_bottom = 40.0

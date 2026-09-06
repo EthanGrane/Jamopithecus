@@ -85,7 +85,6 @@ func _ready() -> void:
 	$Sprite2D.play("idle")
 	preparar_pasos()
 
-
 # El loop de pasos necesita un reproductor que viva todo el rato,
 # no vale el sonar() de un solo uso del GameFeel
 func preparar_pasos() -> void:
@@ -403,3 +402,4 @@ func _on_area_2d_area_entered(area: Area2D) -> void:
 		return
 
 	print("mori")
+	get_tree().get_first_node_in_group("Vignette").fundido_a_negro(player.global_position)

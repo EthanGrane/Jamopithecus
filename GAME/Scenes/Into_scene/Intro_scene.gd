@@ -25,8 +25,10 @@ func process_dialogue():
 		await get_tree().create_timer(3.0).timeout
 		get_tree().change_scene_to_file("res://GAME/Scenes/Escena_Inicial.tscn")
 	label.text = text[n_dialogue].texto
+	
 	if text[n_dialogue].imagen != null:
 		$Sprite2D.texture = text[n_dialogue].imagen
+		
 	var read_time = float(label.text.length() / 14.0)
 	var tween : Tween
 	tween = create_tween()

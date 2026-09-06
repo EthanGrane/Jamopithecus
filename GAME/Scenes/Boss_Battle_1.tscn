@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" path="res://GAME/Camera/camera_dolly.tscn" id="4_xnh4b"]
 [ext_resource type="Script" uid="uid://cadogbi750bcf" path="res://GAME/Camera/dolly_point.gd" id="7_788jl"]
 [ext_resource type="PackedScene" uid="uid://q3uplb1bqp3f" path="res://GAME/BossIntro/boss_intro.tscn" id="8_rd6jl"]
+[ext_resource type="Shader" uid="uid://cjqixv7td7yxl" path="res://GAME/Vignette_Shader/Vignette.gdshader" id="10_5ih2n"]
+[ext_resource type="Script" uid="uid://cvq0iwmba7pnx" path="res://GAME/Vignette_Shader/vignette.gd" id="10_sbmxg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8ptxo"]
 texture = ExtResource("2_8ptxo")
@@ -133,8 +135,14 @@ metadata/_custom_type_script = "uid://cadogbi750bcf"
 
 [sub_resource type="Resource" id="Resource_8arpv"]
 script = ExtResource("7_788jl")
-posicion = Vector2(1150, 300)
+posicion = Vector2(429.045, 300)
 metadata/_custom_type_script = "uid://cadogbi750bcf"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8arpv"]
+shader = ExtResource("10_5ih2n")
+shader_parameter/circle_position = Vector2(0.5, 0.5)
+shader_parameter/radius = 0.445
+shader_parameter/color = Vector4(0, 0, 0, 0)
 
 [node name="BossBattle1" type="Node2D" unique_id=1682470945]
 
@@ -212,6 +220,7 @@ metadata/_edit_lock_ = true
 position = Vector2(471, 479)
 velocidad_min = 400.0
 velocidad_max = 500.0
+atravesar_al_jugador = false
 
 [node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("4_788jl")]
 position = Vector2(-1115, 350)
@@ -246,3 +255,17 @@ retardo = 0.5
 duracion_ida = 1.0
 espera_mirando = 2.0
 duracion_vuelta = 1.0
+
+[node name="Canvas_Vignette" type="CanvasLayer" parent="." unique_id=1265422618 node_paths=PackedStringArray("colorRect") groups=["Vignette"]]
+script = ExtResource("10_sbmxg")
+colorRect = NodePath("ColorRect")
+radius = 0.445
+
+[node name="ColorRect" type="ColorRect" parent="Canvas_Vignette" unique_id=602137621]
+material = SubResource("ShaderMaterial_8arpv")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
