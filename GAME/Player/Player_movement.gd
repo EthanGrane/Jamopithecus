@@ -21,6 +21,9 @@ class_name player extends CharacterBody2D
 @export var cooldown_dash : float = 0.35        # empieza a contar al TERMINAR el dash
 @export var dashes_en_el_aire : int = 1         # se recargan al tocar suelo
 @export var buffer_de_dash : float = 0.12
+# Dashear te vuelve inmune. El margen extra al final es lo que hace
+# que esquivar se sienta justo en vez de milimétrico
+@export var margen_de_inmunidad : float = 0.05
 
 @export_group("Sonidos")
 @export var sonido_salto : AudioStream = preload("res://GAME/SFX/PlayerJump.mp3")
@@ -64,6 +67,9 @@ var cooldown_restante : float = 0.0
 var dashes_dados : int = 0
 var buffer_dash_restante : float = 0.0
 var direccion_dash : float = 1.0
+var inmunidad_restante : float = 0.0
+var empuje_pendiente : Vector2 = Vector2.ZERO
+var hay_empuje : bool = false
 var pasos : AudioStreamPlayer2D = null
 
 
@@ -102,17 +108,41 @@ func _physics_process(delta: float) -> void:
 	actualizar_dash(delta)
 
 	if dasheando:
-		# Durante el dash: línea recta, ni gravedad ni control
+		# Durante el dash: línea recta, ni gravedad ni control.
+		# El dash gana a cualquier empuje externo
 		velocity = Vector2(direccion_dash * velocidad_dash, 0.0)
+		hay_empuje = false
 	else:
 		gestionar_salto()
 		aplicar_gravedad(delta)
 		mover_en_horizontal(delta)
+		aplicar_empuje()
 
 	player_animation()
 	move_and_slide()
 	comprobar_aterrizaje(estaba_en_el_aire, caida)
 	actualizar_pasos()
+
+
+# Lo llaman desde fuera los géiseres de las tuberías. No toca la
+# velocidad directamente a propósito: si lo hiciera, el player la
+# pisaría con su gravedad en el mismo frame según el orden del árbol
+func empujar(velocidad_del_empuje: Vector2) -> void:
+	empuje_pendiente = velocidad_del_empuje
+	hay_empuje = true
+
+
+# El empuje impone la vertical pero te deja el control horizontal:
+# subes en la columna y sigues pudiendo colocarte
+func aplicar_empuje() -> void:
+	if not hay_empuje:
+		return
+
+	velocity.y = empuje_pendiente.y
+	if not is_zero_approx(empuje_pendiente.x):
+		velocity.x = empuje_pendiente.x
+
+	hay_empuje = false
 
 
 # Coyote time y buffer: los dos trucos que hacen que un salto
@@ -197,8 +227,14 @@ func mover_en_horizontal(delta: float) -> void:
 #  Dash
 # ---------------------------------------------------------------
 
+# true mientras el dash te protege. Lo consultan las cosas que matan
+func es_inmune() -> bool:
+	return inmunidad_restante > 0.0
+
+
 func actualizar_dash(delta: float) -> void:
 	cooldown_restante -= delta
+	inmunidad_restante -= delta
 
 	# Mismo truco que el salto: si pulsas un pelín antes de poder, se guarda
 	if Input.is_action_just_pressed("Dash"):
@@ -217,39 +253,35 @@ func actualizar_dash(delta: float) -> void:
 func puede_dashear() -> bool:
 	return cooldown_restante <= 0.0 and dashes_dados < dashes_en_el_aire
 
-
 func empezar_dash() -> void:
 	dasheando = true
 	dash_restante = duracion_dash
 	dashes_dados += 1
 	buffer_dash_restante = 0.0
+	inmunidad_restante = duracion_dash + margen_de_inmunidad
 
-	# Hacia donde pulses; si no pulsas nada, hacia donde mires.
-	# Esto es lo que arregla el "dash parado no hace nada"
+	# Durante el dash no colisionamos con el Boss (Layer 3)
+	set_collision_mask_value(3, false)
+
 	var eje := Input.get_axis("Left", "Right")
 	direccion_dash = signf(eje) if eje != 0.0 else mirando
 	mirando = direccion_dash
 
-	# Los pasos se cortan aquí y no en el siguiente frame: si no,
-	# se oye un tic de pisada justo al arrancar el dash
 	if pasos != null and pasos.playing:
 		pasos.stop()
 
 	GameFeel.sonar(sonido_dash, global_position, volumen_dash, tono_min, tono_max)
-
-	# Si algún día tienes animación de dash, va aquí:
-	# $Sprite2D.play("dash")
 
 
 func terminar_dash() -> void:
 	dasheando = false
 	cooldown_restante = cooldown_dash
 
-	# Sale del dash a velocidad de carrera, no a 900.
-	# Sin esto el dash se siente como un patinazo que no acaba
+	# Volvemos a colisionar con el Boss
+	set_collision_mask_value(3, true)
+
 	velocity.x = direccion_dash * velocidad
 	velocity.y = 0.0
-
 
 # ---------------------------------------------------------------
 
@@ -311,11 +343,13 @@ func _input(event: InputEvent) -> void:
 func decoy():
 	pass
 
+
 func _on_area_2d_area_entered(area: Area2D) -> void:
-	if area.is_in_group("enemy"):
-		get_tree().reload_current_scene()
+	if not area.is_in_group("enemy"):
+		return
 
+	# Dashear te atraviesa el peligro
+	if es_inmune():
+		return
 
-func _on_area_2d_body_entered(body: Node2D) -> void:
-	if body.is_in_group("Boss"):
-		get_tree().reload_current_scene()
+	print("mori")

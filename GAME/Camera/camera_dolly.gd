@@ -1,61 +1,44 @@
 ##
 ##	Summary:
-##	Dolly de cámara: un raíl horizontal entre dos puntos A y B.
-##	La cámara sigue al jugador pero no puede salirse del raíl,
-##	así controlas exactamente qué trozo del mapa se llega a ver.
+##	Cámara del juego.
 ##
-##	En el editor dibuja el raíl y el rectángulo de TODO lo que
-##	el jugador podrá ver alguna vez. Si una zona que no quieres
-##	enseñar cae dentro de ese rectángulo, acorta el raíl.
+##	  Sin puntos → sigue al jugador. Marca bloquear_x o bloquear_y
+##	               y ese eje se queda clavado donde esté este nodo.
+##	  Con puntos → se mueve por la línea que forman, cambiando de
+##	               fov de uno a otro.
+##
+##	El Camera2D va como hijo de este nodo, nunca del Player.
 ##
 
 @tool
 extends Node2D
 class_name CameraDolly
 
-@export var objetivo : Node2D   # si lo dejas vacío busca el grupo "player"
+@export var objetivo : Node2D             # vacío = busca el grupo "player"
+@export var puntos : Array[DollyPoint] = []   # vacío = seguimiento libre
 
-@export_group("Raíl")
-# Los dos puntos van en coordenadas locales del dolly.
-# La altura la manda punto_a: la Y de punto_b se iguala sola.
-@export var punto_a : Vector2 = Vector2(-400, 0) : set = _set_punto_a
-@export var punto_b : Vector2 = Vector2(400, 0) : set = _set_punto_b
+@export var bloquear_x : bool = false
+@export var bloquear_y : bool = true
+@export var fov : float = 1.0             # el que usa sin puntos
 
-@export_group("Seguimiento")
-@export var zona_muerta : float = 40.0        # px que puede moverse sin que la cámara reaccione
-@export var suavizado : float = 6.0           # más alto = más pegada al jugador
-@export var adelanto : float = 80.0           # px que se asoma hacia donde corre
-@export var suavizado_adelanto : float = 3.0
+@export var zona_muerta : Vector2 = Vector2(40.0, 30.0)
+@export var suavizado : float = 6.0
+@export var adelanto : float = 80.0       # px que se asoma hacia donde corre
+@export var sacudida_maxima : float = 20.0
 
-@export_group("Sacudida")
-@export var sacudida_maxima : float = 20.0   # px de desplazamiento como mucho
+@onready var camara : Camera2D = $Camera2D
 
-@export_group("Dibujo en el editor")
-@export var mostrar_bounds : bool = true : set = _set_mostrar_bounds
-@export var color_rail : Color = Color(0.35, 0.85, 1.0)
-@export var color_zona : Color = Color(0.35, 0.85, 1.0, 0.10)
-
-var camara : Camera2D = null
-var centro_x : float = 0.0
+var centro : Vector2 = Vector2.ZERO
 var adelanto_actual : float = 0.0
-var primer_frame : bool = true
-
-var trauma : float = 0.0            # 0 a 1, cuánto tiembla ahora mismo
+var trauma : float = 0.0
 var caida_del_trauma : float = 4.0
 
 
 func _ready() -> void:
-	camara = get_node_or_null("Camera2D")
-
 	if Engine.is_editor_hint():
 		return
 
-	# Para que GameFeel.sacudir() la encuentre sin conocerla
 	add_to_group("camera_shake")
-
-	if camara == null:
-		push_error("CameraDolly: falta un Camera2D como hijo")
-		return
 
 	if objetivo == null:
 		objetivo = get_tree().get_first_node_in_group("player")
@@ -63,74 +46,133 @@ func _ready() -> void:
 	colocar_al_instante()
 
 
-func _process(_delta: float) -> void:
-	# Solo en el editor: mantener el raíl recto y refrescar el dibujo
-	if not Engine.is_editor_hint():
-		return
-
-	punto_b.y = punto_a.y
-
-	# Preview: la cámara se coloca en el centro del raíl
-	if camara == null:
-		camara = get_node_or_null("Camera2D")
-	if camara != null:
-		camara.position = Vector2((punto_a.x + punto_b.x) * 0.5, punto_a.y)
-
-	queue_redraw()
-
-
 func _physics_process(delta: float) -> void:
 	if Engine.is_editor_hint() or camara == null:
 		return
 
-	actualizar_sacudida(delta)
+	sacudir_camara(delta)
 
 	if objetivo == null:
 		return
 
-	# Al arrancar la cámara aparece ya en su sitio, sin viajar hasta él.
-	# Se hace aquí y no solo en _ready por si el objetivo tardó en aparecer
-	if primer_frame:
-		primer_frame = false
-		colocar_al_instante()
+	actualizar_adelanto(delta)
+
+	var suave := suavizar(delta)
+	camara.global_position = camara.global_position.lerp(destino(), suave)
+
+	# En Camera2D más zoom es MÁS cerca, así que el fov es su inverso
+	var z := lerpf(camara.zoom.x, 1.0 / maxf(fov_actual(), 0.05), suave)
+	camara.zoom = Vector2(z, z)
+
+
+# ---------------------------------------------------------------
+
+func destino() -> Vector2:
+	var deseado := objetivo.global_position + Vector2(adelanto_actual, 0.0)
+
+	if puntos.size() > 0:
+		centro = deseado
+		return proyectar(deseado)[0]
+
+	# Zona muerta: dentro de esta ventana el jugador se mueve y la
+	# cámara ni se entera. Sin esto tiembla con cada pasito
+	var dif := deseado - centro
+	if absf(dif.x) > zona_muerta.x:
+		centro.x += dif.x - signf(dif.x) * zona_muerta.x
+	if absf(dif.y) > zona_muerta.y:
+		centro.y += dif.y - signf(dif.y) * zona_muerta.y
+
+	var d := centro
+
+	# El eje bloqueado se clava donde esté este nodo, así lo colocas
+	# arrastrándolo en el editor en vez de escribir coordenadas
+	if bloquear_x:
+		d.x = global_position.x
+	if bloquear_y:
+		d.y = global_position.y
+
+	return d
+
+
+func fov_actual() -> float:
+	if puntos.is_empty():
+		return fov
+	return proyectar(objetivo.global_position)[1]
+
+
+# Proyecta una posición sobre la línea de puntos.
+# Devuelve [posición en el raíl, fov interpolado]
+func proyectar(pos: Vector2) -> Array:
+	if puntos.size() == 1 and puntos[0] != null:
+		return [to_global(puntos[0].posicion), puntos[0].fov]
+
+	var mejor_pos := pos
+	var mejor_fov := fov
+	var mejor_distancia := INF
+
+	for i in puntos.size() - 1:
+		if puntos[i] == null or puntos[i + 1] == null:
+			continue
+
+		var a := to_global(puntos[i].posicion)
+		var b := to_global(puntos[i + 1].posicion)
+		var ab := b - a
+
+		var t := 0.0
+		if ab.length_squared() > 0.0:
+			t = clampf((pos - a).dot(ab) / ab.length_squared(), 0.0, 1.0)
+
+		var sobre_el_rail := a + ab * t
+		var d := pos.distance_squared_to(sobre_el_rail)
+
+		if d < mejor_distancia:
+			mejor_distancia = d
+			mejor_pos = sobre_el_rail
+			mejor_fov = lerpf(puntos[i].fov, puntos[i + 1].fov, t)
+
+	return [mejor_pos, mejor_fov]
+
+
+# La cámara se asoma hacia donde corre el jugador
+func actualizar_adelanto(delta: float) -> void:
+	var deseado := 0.0
+	if objetivo is CharacterBody2D and absf(objetivo.velocity.x) > 10.0:
+		deseado = signf(objetivo.velocity.x) * adelanto
+
+	adelanto_actual = lerpf(adelanto_actual, deseado, suavizar(delta) * 0.5)
+
+
+# Un lerp con un valor fijo va más rápido cuantos más FPS tengas.
+# Esta fórmula da el mismo movimiento a 30 que a 144 fps
+func suavizar(delta: float) -> float:
+	return 1.0 - exp(-suavizado * delta)
+
+
+# Planta la cámara en su sitio de golpe, sin suavizar. Llámala
+# también al hacer respawn o al teletransportar al jugador
+func colocar_al_instante() -> void:
+	if objetivo == null or camara == null:
 		return
 
-	# 1) Adelanto: la cámara se asoma hacia donde corre el jugador
-	var vel_x := 0.0
-	if objetivo is CharacterBody2D:
-		vel_x = objetivo.velocity.x
+	adelanto_actual = 0.0
+	centro = objetivo.global_position
+	camara.global_position = destino()
 
-	var adelanto_deseado := 0.0
-	if absf(vel_x) > 10.0:
-		adelanto_deseado = signf(vel_x) * adelanto
-
-	adelanto_actual = lerpf(adelanto_actual, adelanto_deseado, suavizar(suavizado_adelanto, delta))
-
-	# 2) Zona muerta: dentro de esta ventana la cámara ni se entera
-	var destino := to_local(objetivo.global_position).x + adelanto_actual
-	var diferencia := destino - centro_x
-	if absf(diferencia) > zona_muerta:
-		centro_x += diferencia - signf(diferencia) * zona_muerta
-
-	# 3) El raíl: pase lo que pase, la cámara no sale de A-B
-	centro_x = clampf(centro_x, minf(punto_a.x, punto_b.x), maxf(punto_a.x, punto_b.x))
-
-	# 4) Suavizado
-	camara.position.x = lerpf(camara.position.x, centro_x, suavizar(suavizado, delta))
-	camara.position.y = punto_a.y
+	var z := 1.0 / maxf(fov_actual(), 0.05)
+	camara.zoom = Vector2(z, z)
+	camara.reset_smoothing()
 
 
 # ---------------------------------------------------------------
-#  Sacudida
+#  Sacudida. La llama GameFeel a través del grupo "camera_shake"
 # ---------------------------------------------------------------
 
-# La llama GameFeel.sacudir() a través del grupo "camera_shake"
 func sacudir(fuerza: float = 10.0, duracion: float = 0.25) -> void:
 	trauma = minf(trauma + fuerza / sacudida_maxima, 1.0)
 	caida_del_trauma = 1.0 / maxf(duracion, 0.05)
 
 
-func actualizar_sacudida(delta: float) -> void:
+func sacudir_camara(delta: float) -> void:
 	if trauma <= 0.0:
 		if camara.offset != Vector2.ZERO:
 			camara.offset = Vector2.ZERO
@@ -138,90 +180,56 @@ func actualizar_sacudida(delta: float) -> void:
 
 	trauma = maxf(trauma - caida_del_trauma * delta, 0.0)
 
-	# Al cuadrado: arranca fuerte y se apaga suave. Con trauma lineal
-	# la sacudida se corta de golpe y se nota artificial
+	# Al cuadrado: arranca fuerte y se apaga suave
 	var f := trauma * trauma * sacudida_maxima
 
-	# Va en 'offset' y no en 'position' porque de la position
-	# ya se encarga el raíl cada frame
+	# En offset y no en position, que de esa se encarga el seguimiento
 	camara.offset = Vector2(randf_range(-f, f), randf_range(-f, f))
-
-
-# Planta la cámara en su sitio de golpe, sin suavizar.
-# Llámala también al hacer respawn o al teletransportar al jugador
-func colocar_al_instante() -> void:
-	if objetivo == null or camara == null:
-		return
-
-	adelanto_actual = 0.0
-	centro_x = to_local(objetivo.global_position).x
-	centro_x = clampf(centro_x, minf(punto_a.x, punto_b.x), maxf(punto_a.x, punto_b.x))
-
-	camara.position = Vector2(centro_x, punto_a.y)
-	camara.reset_smoothing()   # por si el Camera2D trae su propio suavizado
-
-
-# Un lerp normal con un valor fijo va más rápido cuantos más FPS tengas.
-# Esta fórmula da el mismo movimiento a 30 que a 144 fps.
-func suavizar(velocidad: float, delta: float) -> float:
-	return 1.0 - exp(-velocidad * delta)
 
 
 # ---------------------------------------------------------------
 #  Dibujo en el editor
 # ---------------------------------------------------------------
 
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint():
+		queue_redraw()
+
+
 func _draw() -> void:
-	if not Engine.is_editor_hint() or not mostrar_bounds:
+	if not Engine.is_editor_hint():
 		return
 
-	var izq := minf(punto_a.x, punto_b.x)
-	var der := maxf(punto_a.x, punto_b.x)
-	var y := punto_a.y
-	var mitad := tam_de_pantalla() * 0.5
+	var azul := Color(0.35, 0.85, 1.0)
+	var naranja := Color(1.0, 0.75, 0.3)
 
-	# TODO lo que se podrá ver alguna vez desde este raíl.
-	# Lo que quede fuera de aquí no se enseña nunca
-	var zona := Rect2(
-		Vector2(izq - mitad.x, y - mitad.y),
-		Vector2((der - izq) + mitad.x * 2.0, mitad.y * 2.0)
-	)
-	draw_rect(zona, color_zona, true)
-	draw_rect(zona, Color(color_rail, 0.5), false, 2.0)
+	if puntos.is_empty():
+		# El encuadre y los ejes que quedan clavados
+		var mitad := tam_de_pantalla(fov) * 0.5
+		draw_rect(Rect2(-mitad, mitad * 2.0), naranja, false, 2.0)
+		if bloquear_x:
+			draw_line(Vector2(0.0, -mitad.y), Vector2(0.0, mitad.y), azul, 3.0)
+		if bloquear_y:
+			draw_line(Vector2(-mitad.x, 0.0), Vector2(mitad.x, 0.0), azul, 3.0)
+		draw_circle(Vector2.ZERO, 9.0, azul)
+		return
 
-	# El encuadre exacto en cada extremo del raíl
-	draw_rect(Rect2(Vector2(izq - mitad.x, y - mitad.y), mitad * 2.0), color_rail, false, 1.0)
-	draw_rect(Rect2(Vector2(der - mitad.x, y - mitad.y), mitad * 2.0), color_rail, false, 1.0)
+	# El raíl, y en cada punto el encuadre que tendrá con su fov
+	var linea : PackedVector2Array = []
+	for p in puntos:
+		if p == null:
+			continue
+		linea.append(p.posicion)
 
-	# El raíl y sus dos puntos
-	draw_line(Vector2(izq, y), Vector2(der, y), color_rail, 3.0)
-	draw_circle(Vector2(punto_a.x, y), 9.0, color_rail)
-	draw_circle(Vector2(punto_b.x, y), 9.0, color_rail)
+		var mitad := tam_de_pantalla(p.fov) * 0.5
+		draw_rect(Rect2(p.posicion - mitad, mitad * 2.0), naranja, false, 2.0)
+		draw_circle(p.posicion, 9.0, azul)
+
+	if linea.size() > 1:
+		draw_polyline(linea, azul, 3.0)
 
 
-# El tamaño de la ventana del juego, no el del editor.
-# Si usas zoom en la cámara hay que dividir por él
-func tam_de_pantalla() -> Vector2:
+func tam_de_pantalla(f: float) -> Vector2:
 	var ancho := float(ProjectSettings.get_setting("display/window/size/viewport_width", 1152))
 	var alto := float(ProjectSettings.get_setting("display/window/size/viewport_height", 648))
-	var zoom := Vector2.ONE
-	if camara != null and camara.zoom.x > 0.0 and camara.zoom.y > 0.0:
-		zoom = camara.zoom
-	return Vector2(ancho / zoom.x, alto / zoom.y)
-
-
-# ---------------------------------------------------------------
-
-func _set_punto_a(valor: Vector2) -> void:
-	punto_a = valor
-	queue_redraw()
-
-
-func _set_punto_b(valor: Vector2) -> void:
-	punto_b = valor
-	queue_redraw()
-
-
-func _set_mostrar_bounds(valor: bool) -> void:
-	mostrar_bounds = valor
-	queue_redraw()
+	return Vector2(ancho, alto) * maxf(f, 0.05)

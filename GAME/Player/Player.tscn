@@ -228,41 +228,13 @@ func _process(delta: float) -> void:
 [sub_resource type="CircleShape2D" id="CircleShape2D_spnxy"]
 radius = 34.234486
 
-[node name="Mosca" type="CharacterBody2D" unique_id=1289701118 groups=["Mosca"]]
+[node name="Mosca" type="CharacterBody2D" unique_id=1289701118]
+collision_layer = 2
+collision_mask = 5
 script = ExtResource("1_28m6o")
-velocidad = null
-aceleracion_suelo = null
-frenada_suelo = null
-aceleracion_aire = null
-frenada_aire = null
-altura_salto = null
-tiempo_de_subida = null
-tiempo_de_bajada = null
-saltos_maximos = null
-corte_de_salto = null
-velocidad_maxima_de_caida = null
-velocidad_dash = null
-duracion_dash = null
-cooldown_dash = null
-dashes_en_el_aire = null
-buffer_de_dash = null
-sonido_salto = null
-sonido_pasos = null
-sonido_dash = null
-sonido_aterrizar = null
-volumen_salto = null
-volumen_pasos = null
-volumen_dash = null
-volumen_aterrizar = null
-caida_minima_para_sonar = null
-rango_de_volumen_al_caer = null
-tono_min = null
-tono_max = null
-velocidad_minima_para_pasos = null
-coyote_time = null
-buffer_de_salto = null
-gravedad_en_el_pico = null
-margen_del_pico = null
+velocidad_dash = 750.0
+duracion_dash = 0.25
+margen_de_inmunidad = 0.1
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=215833921]
 texture_filter = 1
@@ -287,4 +259,3 @@ script = ExtResource("3_throw")
 spear_scene = ExtResource("4_spear")
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
-[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://1ooyjg80xmpg"]
 
 [ext_resource type="Script" uid="uid://dmihecs7ga5tf" path="res://GAME/Boss2/burbujas.gd" id="1_1wgc8"]
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_tptov"]
+[ext_resource type="Texture2D" uid="uid://bnxjhongvq2cq" path="res://GAME/Boss2/Bubble.png" id="2_1wgc8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
 radius = 58.420887
@@ -14,8 +14,9 @@ position = Vector2(1, 3)
 shape = SubResource("CircleShape2D_5sv2w")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1436824745]
+texture_filter = 1
 position = Vector2(-4.7683716e-07, 3)
-scale = Vector2(0.81640625, 0.81640625)
-texture = ExtResource("1_tptov")
+scale = Vector2(4.458334, 4.458334)
+texture = ExtResource("2_1wgc8")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

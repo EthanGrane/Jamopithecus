@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://dfsnygyb73yt2"]
 
-[ext_resource type="Script" path="res://GAME/Boss2/pipe_chorro.gd" id="1_chorro"]
+[ext_resource type="Script" uid="uid://phgd4kgiixvx" path="res://GAME/Boss2/pipe_chorro.gd" id="1_chorro"]
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_vtcfx"]
+[ext_resource type="Texture2D" uid="uid://bnxjhongvq2cq" path="res://GAME/Boss2/Bubble.png" id="3_db5vw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
 size = Vector2(371, 111)
@@ -12,36 +13,38 @@ size = Vector2(85, 107)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zona"]
 size = Vector2(420, 110)
 
-[node name="PipeChorro" type="StaticBody2D"]
+[node name="PipeChorro" type="StaticBody2D" unique_id=1554482706]
 script = ExtResource("1_chorro")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1951866063]
 light_mask = 3
 visibility_layer = 2
 position = Vector2(175, 39)
 shape = SubResource("RectangleShape2D_5sv2w")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=370563080]
 position = Vector2(176.99998, 43.499996)
 scale = Vector2(2.9531248, 0.8671875)
 texture = ExtResource("2_vtcfx")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="." unique_id=787522169]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=411166036]
 position = Vector2(32.5, 43.5)
 shape = SubResource("RectangleShape2D_spnxy")
 
-[node name="ZonaDeMuerte" type="Area2D" parent="." groups=["enemy"]]
-monitoring = false
+[node name="ZonaDeMuerte" type="Area2D" parent="." unique_id=105971543]
+collision_mask = 2
+monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaDeMuerte"]
-disabled = true
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaDeMuerte" unique_id=47262723]
 shape = SubResource("RectangleShape2D_zona")
+disabled = true
 
-[node name="Burbujas" type="CPUParticles2D" parent="ZonaDeMuerte"]
+[node name="Burbujas" type="CPUParticles2D" parent="ZonaDeMuerte" unique_id=864224775]
 emitting = false
 amount = 60
+texture = ExtResource("3_db5vw")
 lifetime = 1.2
 randomness = 0.4
 emission_shape = 3

@@ -1,169 +1,300 @@
 ##
 ##	Summary:
-##	Boss2, el renacuajo. No decide nada por su cuenta: el director
-##	(boss_2_fight.gd) le dice cuándo saltar y él salta.
+##	Boss2, el renacuajo. Ataca como el Ojo de Cthulhu de Terraria:
 ##
-##	Solo es vulnerable mientras está en el aire. Si le aciertas,
-##	se corta el arco y se cae al agua.
+##		EMERGIENDO  sale del agua de un salto corto
+##		APUNTANDO   se queda fijándote  ← el aviso
+##		EMBISTE     se lanza a por ti en línea recta y no para
+##		            hasta salirse de la pantalla
+##
+##	Tocarlo mata: hay que esquivar dasheando, que te vuelve inmune.
+##	Atraviesa el escenario, así que no puedes refugiarte detrás de
+##	nada: solo puedes quitarte de en medio.
+##
+##	El director (boss_2_fight.gd) le dice cuándo salir.
 ##
 
-# CharacterBody2D movido con move_and_slide(), igual que el Boss1.
-# Teletransportarlo con global_position movía el sprite pero el motor
-# de físicas no generaba los eventos de las Area2D, y la lanza lo
-# atravesaba aunque las formas se solaparan en pantalla.
 extends CharacterBody2D
 class_name Boss2
 
-signal salto_terminado
+signal ataque_terminado
 
 enum Estado {
 	BAJO_EL_AGUA,   # escondido, invulnerable
-	SALTANDO,       # en el aire: la ventana para atacarle
-	CAYENDO,        # le han dado, se hunde
+	EMERGIENDO,     # saliendo del agua
+	APUNTANDO,      # quieto, fijándote: el aviso antes del embiste
+	EMBISTE,        # a por ti, hasta salirse de la pantalla
+	ESTAMPADO,      # solo si atraviesa_el_escenario está desmarcado
 }
 
-@export_group("Salto")
-@export var girar_con_el_arco : bool = true   # el sprite apunta hacia donde va
+@export_group("Salida del agua")
+@export var altura_de_salida : float = 260.0
+@export var duracion_de_salida : float = 0.45
 
-@export_group("Caída")
-@export var velocidad_de_caida : float = 900.0
-@export var giro_al_caer : float = 6.0
+@export_group("Embiste")
+@export var tiempo_apuntando : float = 0.5      # el aviso, te da tiempo a colocarte
+@export var velocidad_del_embiste : float = 1200.0
+@export var giro_al_embestir : float = 14.0     # vueltas del sprite mientras carga
+# Si está marcado atraviesa paredes y se va de pantalla, como el
+# Ojo de Cthulhu. Desmárcalo y podrá estamparse contra el escenario
+@export var atraviesa_el_escenario : bool = true
+@export var margen_fuera_de_pantalla : float = 250.0
+@export var tiempo_maximo_embistiendo : float = 5.0   # red de seguridad
+
+@export_group("Estampado")
+@export var tiempo_estampado : float = 2.5
+@export var rebote_al_estamparse : float = 260.0
 
 var estado : Estado = Estado.BAJO_EL_AGUA
 var salud : HealthComponent = null
 
-var punto_inicio : Vector2 = Vector2.ZERO
-var punto_fin : Vector2 = Vector2.ZERO
-var altura : float = 300.0
-var duracion : float = 1.6
-var y_del_agua : float = 0.0
-var avance : float = 0.0      # 0 a 1 dentro del arco
+var punto_de_salida : Vector2 = Vector2.ZERO
+var punto_alto : Vector2 = Vector2.ZERO
+var avance : float = 0.0
+var contador : float = 0.0
+var direccion_embiste : Vector2 = Vector2.RIGHT
+
 var capa_original : int = 1
+var mascara_original : int = 1
 
 @onready var sprite : Sprite2D = $Sprite2D
 @onready var reaccion : HitReactionComponent = $HitReactionComponent
+@onready var contacto : CollisionShape2D = $Contacto/CollisionShape2D
 
 
 func _ready() -> void:
 	capa_original = collision_layer
+	mascara_original = collision_mask if collision_mask != 0 else 1
 
-	# No choca contra nada: vuela por el aire y solo necesita
-	# que la lanza pueda detectarlo
-	collision_mask = 0
+	# Para que la campana lo encuentre sin conocerlo
+	add_to_group("aturdible_por_sonido")
 
 	salud = get_node_or_null("HealthComponent")
-	esconderse()
+	volver_al_agua()
 
 
 func _physics_process(delta: float) -> void:
 	match estado:
-		Estado.SALTANDO:
-			avanzar_por_el_arco(delta)
-		Estado.CAYENDO:
-			caer_al_agua(delta)
+		Estado.EMERGIENDO:
+			emerger(delta)
+		Estado.APUNTANDO:
+			apuntar(delta)
+		Estado.EMBISTE:
+			embestir(delta)
+		Estado.ESTAMPADO:
+			estar_estampado(delta)
 
 
 # ---------------------------------------------------------------
-#  Salto
+#  1. Salir del agua
 # ---------------------------------------------------------------
 
-# La llama el director. desde/hasta son los dos Marker2D del arco
-func saltar(desde: Vector2, hasta: Vector2, altura_del_arco: float, dur: float) -> void:
-	punto_inicio = desde
-	punto_fin = hasta
-	altura = altura_del_arco
-	duracion = maxf(dur, 0.05)
-	# El más bajo de los dos extremos: así vale igual en A→B que en B→A
-	# aunque los marcadores no estén exactamente a la misma altura
-	y_del_agua = maxf(desde.y, hasta.y)
+# La llama el director cuando arrancan los géiseres
+func embestir_desde(punto: Vector2) -> void:
+	punto_de_salida = punto
+	punto_alto = punto + Vector2(0.0, -altura_de_salida)
 	avance = 0.0
 
-	estado = Estado.SALTANDO
+	estado = Estado.EMERGIENDO
 	visible = true
-	poner_colisiones(true)
-
-	if salud != null:
-		salud.invulnerable = false   # solo se le puede dar en el aire
-
-	global_position = desde
-
-
-func avanzar_por_el_arco(delta: float) -> void:
-	avance = minf(avance + delta / duracion, 1.0)
-	var destino := punto_del_arco(avance)
-
-	# La clave: en vez de saltar a la posición, calculamos la velocidad
-	# que hace falta para llegar y dejamos que la mueva el motor.
-	# Así el motor sabe que se ha movido y avisa a las Area2D
-	velocity = (destino - global_position) / delta
-	move_and_slide()
-
-	# Se orienta hacia donde va, como un pez saltando
-	if girar_con_el_arco and velocity.length() > 1.0:
-		rotation = velocity.angle()
-
-	if avance >= 1.0:
-		terminar_salto()
-
-
-# Curva de tres puntos: salida, un punto alto en medio, y entrada
-func punto_del_arco(t: float) -> Vector2:
-	var medio := (punto_inicio + punto_fin) * 0.5
-	medio.y -= altura
-	return punto_inicio.lerp(medio, t).lerp(medio.lerp(punto_fin, t), t)
-
-
-func terminar_salto() -> void:
-	esconderse()
-	salto_terminado.emit()
-
-
-# ---------------------------------------------------------------
-#  Le han dado
-# ---------------------------------------------------------------
-
-# La llama el HealthComponent. Mismo nombre que en el Boss1
-func change_state() -> void:
-	# Solo cuenta si estaba en el aire
-	if estado != Estado.SALTANDO:
-		return
-	caer()
-
-
-func caer() -> void:
-	estado = Estado.CAYENDO
-
-	if salud != null:
-		salud.invulnerable = true   # no se le puede rematar mientras cae
-
-	# Sonido, destello, punch, onda, hitstop y sacudida, todo de golpe
-	reaccion.reaccionar()
-
-
-func caer_al_agua(delta: float) -> void:
-	velocity = Vector2(0.0, velocidad_de_caida)
-	move_and_slide()
-	rotation += giro_al_caer * delta
-
-	if global_position.y >= y_del_agua:
-		terminar_salto()
-
-
-# ---------------------------------------------------------------
-
-func esconderse() -> void:
-	estado = Estado.BAJO_EL_AGUA
-	visible = false
+	global_position = punto
 	rotation = 0.0
-	velocity = Vector2.ZERO
-	reaccion.restablecer()   # por si se escondió a mitad del punch o del destello
-	poner_colisiones(false)
+
+	poner_capa(true)
+	poner_contacto(true)
+
+	# Volando no choca con nada: solo tiene que poder tocarte a ti
+	set_deferred("collision_mask", 0)
 
 	if salud != null:
 		salud.invulnerable = true
 
 
-# Se quita la capa y no la máscara, igual que en el Boss1:
-# deja de existir para la lanza y para el jugador
-func poner_colisiones(activas: bool) -> void:
-	set_deferred("collision_layer", capa_original if activas else 0)
+func emerger(delta: float) -> void:
+	avance = minf(avance + delta / maxf(duracion_de_salida, 0.05), 1.0)
+
+	# Sale rápido y frena arriba, como un pez que asoma
+	var suavizado := 1.0 - pow(1.0 - avance, 3.0)
+	var destino := punto_de_salida.lerp(punto_alto, suavizado)
+
+	# Se mueve con el motor, no teletransportando: si no, la lanza
+	# y el jugador no detectarían el contacto
+	velocity = (destino - global_position) / delta
+	move_and_slide()
+
+	if avance >= 1.0:
+		empezar_a_apuntar()
+
+
+# ---------------------------------------------------------------
+#  2. Apuntar
+# ---------------------------------------------------------------
+
+func empezar_a_apuntar() -> void:
+	estado = Estado.APUNTANDO
+	contador = tiempo_apuntando
+	velocity = Vector2.ZERO
+
+
+func apuntar(delta: float) -> void:
+	velocity = Vector2.ZERO
+
+	# Te sigue apuntando hasta el último instante: ves de dónde
+	# viene y decides cuándo esquivar
+	var jugador := buscar_jugador()
+	if jugador != null:
+		direccion_embiste = (jugador.global_position - global_position).normalized()
+		rotation = direccion_embiste.angle()
+
+	contador -= delta
+	if contador <= 0.0:
+		lanzarse()
+
+
+# ---------------------------------------------------------------
+#  3. Embestir hasta salir de pantalla
+# ---------------------------------------------------------------
+
+func lanzarse() -> void:
+	estado = Estado.EMBISTE
+	contador = tiempo_maximo_embistiendo
+
+	if not atraviesa_el_escenario:
+		set_deferred("collision_mask", mascara_original)
+
+
+func embestir(delta: float) -> void:
+	velocity = direccion_embiste * velocidad_del_embiste
+	move_and_slide()
+
+	sprite.rotation += giro_al_embestir * delta
+
+	# Si puede chocar y ha chocado, se estampa
+	if not atraviesa_el_escenario and get_slide_collision_count() > 0:
+		estamparse()
+		return
+
+	# No frena ni gira: sigue recto hasta perderse de vista
+	if fuera_de_pantalla() or contador <= 0.0:
+		volver_al_agua()
+
+	contador -= delta
+
+
+# En coordenadas de pantalla, así funciona con la cámara donde esté
+func fuera_de_pantalla() -> bool:
+	var pantalla := get_viewport_rect().size
+	var pos := get_global_transform_with_canvas().origin
+
+	return pos.x < -margen_fuera_de_pantalla \
+			or pos.y < -margen_fuera_de_pantalla \
+			or pos.x > pantalla.x + margen_fuera_de_pantalla \
+			or pos.y > pantalla.y + margen_fuera_de_pantalla
+
+
+# ---------------------------------------------------------------
+#  Estampado (solo si no atraviesa el escenario)
+# ---------------------------------------------------------------
+
+func estamparse() -> void:
+	caer_aturdido()
+	velocity = -direccion_embiste * rebote_al_estamparse
+
+
+# La llama la campana cuando su onda le alcanza. Solo funciona si
+# está fuera del agua: si está sumergido, el campanazo se pierde
+func aturdir_por_sonido() -> bool:
+	if estado == Estado.BAJO_EL_AGUA or estado == Estado.ESTAMPADO:
+		return false
+
+	caer_aturdido()
+	return true
+
+
+func caer_aturdido() -> void:
+	estado = Estado.ESTAMPADO
+	contador = tiempo_estampado
+	velocity = Vector2.ZERO
+
+	# Le devolvemos las colisiones para que el suelo lo pare.
+	# Volando las tenía a cero y se hundiría por el escenario
+	set_deferred("collision_mask", mascara_original)
+
+	poner_contacto(false)   # aturdido ya no mata al tocarlo
+
+	if salud != null:
+		salud.invulnerable = false   # AHORA sí se le puede dar
+
+	reaccion.reaccionar()
+
+
+func estar_estampado(delta: float) -> void:
+	velocity.x = move_toward(velocity.x, 0.0, 900.0 * delta)
+	velocity.y = minf(velocity.y + 1400.0 * delta, 900.0)
+	move_and_slide()
+
+	contador -= delta
+	if contador <= 0.0:
+		volver_al_agua()
+
+
+# La llama el HealthComponent al recibir un golpe
+func change_state() -> void:
+	if estado != Estado.ESTAMPADO:
+		return
+
+	reaccion.reaccionar()
+	volver_al_agua()
+
+
+# ---------------------------------------------------------------
+
+func volver_al_agua() -> void:
+	estado = Estado.BAJO_EL_AGUA
+	visible = false
+	rotation = 0.0
+	velocity = Vector2.ZERO
+
+	if sprite != null:
+		sprite.rotation = 0.0
+
+	reaccion.restablecer()
+	poner_capa(false)
+	poner_contacto(false)
+
+	if salud != null:
+		salud.invulnerable = true
+
+	ataque_terminado.emit()
+
+
+# La capa es "quién puede verme": a cero, ni la lanza ni el jugador
+func poner_capa(activa: bool) -> void:
+	set_deferred("collision_layer", capa_original if activa else 0)
+
+
+# El área que mata al tocarla
+func poner_contacto(activo: bool) -> void:
+	contacto.set_deferred("disabled", not activo)
+
+
+func buscar_jugador() -> Node2D:
+	var por_grupo := get_tree().get_first_node_in_group("player")
+	if por_grupo is Node2D:
+		return por_grupo
+
+	return buscar_por_clase(get_tree().current_scene)
+
+
+func buscar_por_clase(nodo: Node) -> Node2D:
+	if nodo == null:
+		return null
+	if nodo is player:
+		return nodo
+
+	for hijo in nodo.get_children():
+		var encontrado := buscar_por_clase(hijo)
+		if encontrado != null:
+			return encontrado
+
+	return null
