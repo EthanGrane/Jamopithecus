@@ -3,8 +3,9 @@
 [ext_resource type="Script" uid="uid://2r3qbobueclh" path="res://GAME/Player/PlayerAttack/spear.gd" id="1_spear"]
 [ext_resource type="Texture2D" uid="uid://26k0sc2c5rtg" path="res://GAME/Player/Walker_sprite.png" id="2_ppbye"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_spear"]
-radius = 4.1231055
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ekbji"]
+radius = 4.0
+height = 34.0
 
 [node name="Spear" type="Area2D" unique_id=748100319 groups=["player_spear"]]
 scale = Vector2(2, 2)
@@ -24,7 +25,7 @@ region_enabled = true
 region_rect = Rect2(64, 27, 10, 34)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=366523819]
-position = Vector2(13, 0)
-shape = SubResource("CircleShape2D_spear")
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_ekbji")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

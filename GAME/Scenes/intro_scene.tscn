@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://0jjgxvunwygs" path="res://GAME/Scenes/Intro_scene.gd" id="1_m84vs"]
 [ext_resource type="FontFile" uid="uid://dj3dko4qnyq34" path="res://Extras/DTM-Mono.otf" id="2_h7qg8"]
 
-
 [sub_resource type="LabelSettings" id="LabelSettings_5sv2w"]
 font = ExtResource("2_h7qg8")
 font_size = 50
@@ -37,6 +36,7 @@ offset_bottom = -66.0
 grow_horizontal = 2
 grow_vertical = 2
 label_settings = SubResource("LabelSettings_5sv2w")
+autowrap_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1120860853]
 layout_mode = 1

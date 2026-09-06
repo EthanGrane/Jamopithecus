@@ -22,6 +22,24 @@ class_name player extends CharacterBody2D
 @export var dashes_en_el_aire : int = 1         # se recargan al tocar suelo
 @export var buffer_de_dash : float = 0.12
 
+@export_group("Sonidos")
+@export var sonido_salto : AudioStream = preload("res://GAME/SFX/PlayerJump.mp3")
+@export var sonido_pasos : AudioStream = preload("res://GAME/SFX/PlayerWalkLoop.mp3")
+@export var sonido_dash : AudioStream = preload("res://GAME/SFX/PlayerDash.wav")
+@export var sonido_aterrizar : AudioStream = preload("res://GAME/SFX/PlayerLand.mp3")
+@export_range(-40.0, 12.0) var volumen_salto : float = 0.0
+@export_range(-40.0, 12.0) var volumen_pasos : float = -4.0
+@export_range(-40.0, 12.0) var volumen_dash : float = 0.0
+@export_range(-40.0, 12.0) var volumen_aterrizar : float = 0.0
+# Por debajo de esta velocidad de caída no suena: evita el tic
+# al bajar un escalón o al despegarte un frame de una pendiente
+@export var caida_minima_para_sonar : float = 220.0
+# Cuántos dB más flojo suena la caída más suave respecto a la más fuerte
+@export var rango_de_volumen_al_caer : float = 9.0
+@export var tono_min : float = 0.94   # variación para que no suene a copia
+@export var tono_max : float = 1.06
+@export var velocidad_minima_para_pasos : float = 30.0
+
 @export_group("Ayudas al jugador")
 @export var coyote_time : float = 0.10          # saltar justo después de salir del borde
 @export var buffer_de_salto : float = 0.12      # pulsar justo antes de aterrizar
@@ -46,13 +64,40 @@ var cooldown_restante : float = 0.0
 var dashes_dados : int = 0
 var buffer_dash_restante : float = 0.0
 var direccion_dash : float = 1.0
+var pasos : AudioStreamPlayer2D = null
 
 
 func _ready() -> void:
 	$Sprite2D.play("idle")
+	preparar_pasos()
+
+
+# El loop de pasos necesita un reproductor que viva todo el rato,
+# no vale el sonar() de un solo uso del GameFeel
+func preparar_pasos() -> void:
+	if sonido_pasos == null:
+		return
+
+	pasos = AudioStreamPlayer2D.new()
+
+	# Duplicamos el stream para poder forzarle el bucle sin tocar
+	# el recurso original ni depender de los ajustes de importación
+	var stream := sonido_pasos.duplicate()
+	if stream is AudioStreamMP3 or stream is AudioStreamOggVorbis:
+		stream.loop = true
+
+	pasos.stream = stream
+	pasos.volume_db = volumen_pasos
+	add_child(pasos)
 
 
 func _physics_process(delta: float) -> void:
+	# Hay que guardarlos ANTES de move_and_slide: al aterrizar, el
+	# motor pone la velocidad vertical a cero y ya no sabríamos
+	# si ha sido un saltito o una caída de veinte metros
+	var estaba_en_el_aire := not is_on_floor()
+	var caida := velocity.y
+
 	actualizar_ayudas(delta)
 	actualizar_dash(delta)
 
@@ -66,6 +111,8 @@ func _physics_process(delta: float) -> void:
 
 	player_animation()
 	move_and_slide()
+	comprobar_aterrizaje(estaba_en_el_aire, caida)
+	actualizar_pasos()
 
 
 # Coyote time y buffer: los dos trucos que hacen que un salto
@@ -104,6 +151,7 @@ func gestionar_salto() -> void:
 func saltar() -> void:
 	# La animación se lanza y punto: nada de await, que retrasa el salto un frame
 	$Sprite2D.play("jump")
+	GameFeel.sonar(sonido_salto, global_position, volumen_salto, tono_min, tono_max)
 	velocity.y = velocidad_salto
 	saltos_dados += 1
 	coyote_restante = 0.0
@@ -182,6 +230,13 @@ func empezar_dash() -> void:
 	direccion_dash = signf(eje) if eje != 0.0 else mirando
 	mirando = direccion_dash
 
+	# Los pasos se cortan aquí y no en el siguiente frame: si no,
+	# se oye un tic de pisada justo al arrancar el dash
+	if pasos != null and pasos.playing:
+		pasos.stop()
+
+	GameFeel.sonar(sonido_dash, global_position, volumen_dash, tono_min, tono_max)
+
 	# Si algún día tienes animación de dash, va aquí:
 	# $Sprite2D.play("dash")
 
@@ -197,6 +252,39 @@ func terminar_dash() -> void:
 
 
 # ---------------------------------------------------------------
+
+# Aterrizar es la transición aire -> suelo, no "estar en el suelo"
+func comprobar_aterrizaje(estaba_en_el_aire: bool, caida: float) -> void:
+	if not estaba_en_el_aire or not is_on_floor():
+		return
+
+	if caida < caida_minima_para_sonar:
+		return
+
+	# Cuanto más fuerte la caída, más fuerte el golpe. Un salto pequeño
+	# y una caída larga sonando igual es lo que hace que un juego
+	# suene "plano" sin que sepas por qué
+	var fuerza := clampf(caida / velocidad_maxima_de_caida, 0.0, 1.0)
+	var volumen := volumen_aterrizar - (1.0 - fuerza) * rango_de_volumen_al_caer
+
+	GameFeel.sonar(sonido_aterrizar, global_position, volumen, tono_min, tono_max)
+
+
+# Los pasos suenan solo pisando suelo y moviéndose de verdad.
+# En el aire y durante el dash se callan
+func actualizar_pasos() -> void:
+	if pasos == null:
+		return
+
+	var andando := is_on_floor() \
+			and not dasheando \
+			and absf(velocity.x) > velocidad_minima_para_pasos
+
+	if andando and not pasos.playing:
+		pasos.play()
+	elif not andando and pasos.playing:
+		pasos.stop()
+
 
 func player_animation():
 	if velocity.x > 0.0:

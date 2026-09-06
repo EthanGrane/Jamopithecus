@@ -1,0 +1,58 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://GAME/Boss2/pipe_chorro.gd" id="1_chorro"]
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_vtcfx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
+size = Vector2(371, 111)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spnxy"]
+size = Vector2(85, 107)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_zona"]
+size = Vector2(420, 110)
+
+[node name="PipeChorro" type="StaticBody2D"]
+script = ExtResource("1_chorro")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+light_mask = 3
+visibility_layer = 2
+position = Vector2(175, 39)
+shape = SubResource("RectangleShape2D_5sv2w")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(176.99998, 43.499996)
+scale = Vector2(2.9531248, 0.8671875)
+texture = ExtResource("2_vtcfx")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(32.5, 43.5)
+shape = SubResource("RectangleShape2D_spnxy")
+
+[node name="ZonaDeMuerte" type="Area2D" parent="." groups=["enemy"]]
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ZonaDeMuerte"]
+disabled = true
+shape = SubResource("RectangleShape2D_zona")
+
+[node name="Burbujas" type="CPUParticles2D" parent="ZonaDeMuerte"]
+emitting = false
+amount = 60
+lifetime = 1.2
+randomness = 0.4
+emission_shape = 3
+emission_rect_extents = Vector2(210, 44)
+direction = Vector2(-1, 0)
+spread = 25.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 80.0
+initial_velocity_max = 220.0
+scale_amount_min = 0.3
+scale_amount_max = 1.1
+color = Color(0.7, 0.92, 1, 0.7)
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

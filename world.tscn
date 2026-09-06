@@ -3,7 +3,8 @@
 [ext_resource type="Script" uid="uid://coagpgysfd7j2" path="res://world.gd" id="1_aqk2v"]
 [ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="2_036b0"]
 [ext_resource type="PackedScene" uid="uid://dhqdggwgoh3yy" path="res://GAME/Scenes/Boss_Battle_1.tscn" id="3_dwbse"]
-[ext_resource type="PackedScene" uid="uid://b56rpd4nnfnh0" path="res://GAME/Boss2/boss_2_fight.tscn" id="4_pkg7o"]
+[ext_resource type="PackedScene" uid="uid://b56rpd4nnfnh0" path="res://GAME/Scenes/Boss_Battle_2.tscn" id="4_pkg7o"]
+
 
 [node name="World" type="Node2D" unique_id=2125391229 node_paths=PackedStringArray("the_player")]
 position = Vector2(20, -34)

@@ -1,23 +1,25 @@
 [gd_scene format=3 uid="uid://fbjgye8ct80e"]
 
 [ext_resource type="Shader" uid="uid://bjmkn2qgnnun3" path="res://GAME/Water/agua.gdshader" id="1_agua"]
+[ext_resource type="Script" uid="uid://c8ph0u4t32uqu" path="res://GAME/Water/agua.gd" id="2_agua"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_agua"]
 shader = ExtResource("1_agua")
 shader_parameter/color_agua = Color(0.39406818, 0.53358614, 0.3160736, 1)
-shader_parameter/color_linea = Color(0.61158615, 0.7725087, 0.58828825, 1)
-shader_parameter/opacidad = 0.7
+shader_parameter/color_linea = Color(0.41960785, 0.5686275, 0.39607844, 1)
+shader_parameter/opacidad = 1.0
 shader_parameter/longitud_ola = 344.1490158720775
 shader_parameter/amplitud = 3.4490001638275
 shader_parameter/velocidad = 0.54400002584
 shader_parameter/grosor_linea = 3.8370001822575
-shader_parameter/distorsion = 0.004
-shader_parameter/longitud_temblor = 60.0
+shader_parameter/distorsion = 4.2390002013525
+shader_parameter/longitud_temblor = 164.790007352525
 
 [node name="Agua" type="ColorRect" unique_id=875838277]
-z_index = -1
+z_index = 1
 texture_repeat = 2
 material = SubResource("ShaderMaterial_agua")
 offset_right = 908.0
 offset_bottom = 200.0
 mouse_filter = 2
+script = ExtResource("2_agua")

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_vtcfx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
-size = Vector2(371, 111)
+size = Vector2(360.5, 111)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_spnxy"]
 size = Vector2(85, 107)
@@ -15,17 +15,15 @@ script = ExtResource("1_k7yxf")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2071173897]
 light_mask = 3
 visibility_layer = 2
-position = Vector2(175, 39)
-scale = Vector2(1, 0.68000007)
+position = Vector2(180.25, 39)
 shape = SubResource("RectangleShape2D_5sv2w")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=320352643]
 position = Vector2(176.99998, 43.499996)
-scale = Vector2(2.9531248, 0.5896876)
+scale = Vector2(2.9531248, 0.8671875)
 texture = ExtResource("2_vtcfx")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1731586091]
-scale = Vector2(1, 0.68000007)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1051395172]
 position = Vector2(32.5, 43.5)

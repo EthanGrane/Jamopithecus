@@ -11,6 +11,7 @@ class_name Boss1
 enum Estado {
 	RODANDO,    # va a lo suyo, rebotando por la sala
 	ATURDIDO,   # le han dado: quieto, sin colisiones y sin poder recibir más
+	DENTRO,     # escondido en una tubería mientras ésta avisa
 }
 
 @export_group("Movimiento")
@@ -24,6 +25,12 @@ enum Estado {
 @export_group("Tuberías")
 @export var distancia_de_salida : float = 60.0   # px que sale por delante de la boca
 @export var tiempo_entre_tuberias : float = 0.4  # evita el bucle de entrar y salir sin fin
+# El boss también se estruja al entrar. Desmárcalo si prefieres
+# que solo se deforme la tubería
+@export var encogerse_al_entrar : bool = true
+@export var escala_al_entrar : Vector2 = Vector2(0.15, 1.3)
+@export var duracion_al_entrar : float = 0.18
+@export var duracion_al_salir : float = 0.22
 
 @export_group("Aturdimiento")
 @export var tiempo_aturdido : float = 1.5
@@ -51,9 +58,12 @@ var direccion : float = 1.0
 var velocidad : float = 0.0
 var contador_aturdido : float = 0.0
 var cooldown_tuberia : float = 0.0
+var contador_dentro : float = 0.0
 var ultima_tuberia : Pipe = null
+var tuberia_destino : Pipe = null
 var capa_original : int = 0
 var escala_base : Vector2 = Vector2.ONE
+var tween_sprite : Tween = null
 
 @onready var sprite : Sprite2D = $Sprite2D
 @onready var salud : HealthComponent = $HealthComponent
@@ -68,6 +78,11 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	cooldown_tuberia -= delta
+
+	# Dentro de la tubería no existe: ni gravedad, ni movimiento
+	if estado == Estado.DENTRO:
+		esperar_dentro(delta)
+		return
 
 	match estado:
 		Estado.RODANDO:
@@ -114,15 +129,81 @@ func entrar_en_tuberia(entrada: Pipe) -> void:
 	if destino == null:
 		return
 
-	direccion = destino.direccion_salida()
+	entrada.tragar()   # la tubería se encoge: se lo ha tragado
+	meterse_en(destino)
+
+
+# Desaparece y espera a que la tubería de destino termine de avisar.
+# El jugador ve temblar la tubería y sabe por dónde va a salir
+func meterse_en(destino: Pipe) -> void:
+	estado = Estado.DENTRO
+	tuberia_destino = destino
+	ultima_tuberia = destino
+
+	velocity = Vector2.ZERO
+	set_deferred("collision_layer", 0)
+
+	# La tubería avisa y nos dice cuánto va a tardar
+	contador_dentro = destino.avisar()
+
+	ser_tragado()
+
+
+# El punch de entrar: deja de girar en seco y se estruja
+# hacia dentro, como si la tubería se lo sorbiera
+func ser_tragado() -> void:
+	if not encogerse_al_entrar:
+		esconderse_del_todo()
+		return
+
+	matar_tween_sprite()
+
+	# Endereza el sprite al giro completo más cercano, para que
+	# el aplastamiento se vea horizontal y no en diagonal
+	var rotacion_recta := roundf(sprite.rotation / TAU) * TAU
+
+	tween_sprite = create_tween()
+	tween_sprite.tween_property(sprite, "scale", escala_base * escala_al_entrar, duracion_al_entrar)\
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tween_sprite.parallel().tween_property(sprite, "rotation", rotacion_recta, duracion_al_entrar)\
+		.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	tween_sprite.tween_callback(esconderse_del_todo)
+
+
+func esconderse_del_todo() -> void:
+	visible = false
+	sprite.scale = escala_base
+
+
+func esperar_dentro(delta: float) -> void:
+	contador_dentro -= delta
+	if contador_dentro <= 0.0:
+		salir_de_tuberia()
+
+
+func salir_de_tuberia() -> void:
+	if tuberia_destino == null or not is_instance_valid(tuberia_destino):
+		estado = Estado.RODANDO
+		visible = true
+		set_deferred("collision_layer", capa_original)
+		return
+
+	direccion = tuberia_destino.direccion_salida()
 
 	# Aparece un poco por delante de la boca, mirando hacia fuera.
 	# Si saliera justo encima volvería a entrar en su propia área
-	global_position = destino.punto_de_salida() + Vector2(direccion * distancia_de_salida, 0.0)
-	velocity = Vector2.ZERO
+	global_position = tuberia_destino.punto_de_salida() \
+			+ Vector2(direccion * distancia_de_salida, 0.0)
 
-	ultima_tuberia = destino
+	velocity = Vector2.ZERO
+	visible = true
+	set_deferred("collision_layer", capa_original)
+
+	tuberia_destino.estallar()   # el golpe seco de la tubería
+	ser_escupido()               # y el suyo propio
 	cooldown_tuberia = tiempo_entre_tuberias
+	estado = Estado.RODANDO
 
 	# Sale de la tubería volviendo a ser atacable
 	volver_a_ser_vulnerable()
@@ -157,7 +238,8 @@ func elegir_otra_tuberia(entrada: Pipe) -> Pipe:
 # La llama el HealthComponent al recibir un golpe.
 # Mantengo el nombre para no romper nada de lo que ya tienes
 func change_state() -> void:
-	if estado == Estado.ATURDIDO:
+	# Dentro de una tubería no se le puede dar
+	if estado == Estado.ATURDIDO or estado == Estado.DENTRO:
 		return
 	aturdir()
 
@@ -231,10 +313,31 @@ func _poner_blanco(valor: float) -> void:
 		mat.set_shader_parameter("blanco", valor)
 
 
+# Sale estrujado y se despliega de golpe. Es el mismo punch
+# de entrar pero al revés
+func ser_escupido() -> void:
+	matar_tween_sprite()
+
+	sprite.scale = escala_base * escala_al_entrar
+
+	tween_sprite = create_tween()
+	tween_sprite.tween_property(sprite, "scale", escala_base, duracion_al_salir)\
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
 # El punch: se aplasta de golpe y vuelve a su escala con un rebote
 func golpe_de_escala() -> void:
+	matar_tween_sprite()
+
 	sprite.scale = escala_base * escala_del_golpe
 
-	var tw := create_tween()
-	tw.tween_property(sprite, "scale", escala_base, duracion_del_golpe)\
+	tween_sprite = create_tween()
+	tween_sprite.tween_property(sprite, "scale", escala_base, duracion_del_golpe)\
 		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+
+# Todos los punches del sprite usan el mismo Tween: si se solapan
+# dos, el segundo arranca desde una escala a medias y se ve raro
+func matar_tween_sprite() -> void:
+	if tween_sprite != null and tween_sprite.is_valid():
+		tween_sprite.kill()

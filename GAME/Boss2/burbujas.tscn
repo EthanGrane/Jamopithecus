@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://1ooyjg80xmpg"]
+[gd_scene load_steps=4 format=3 uid="uid://1ooyjg80xmpg"]
 
 [ext_resource type="Script" uid="uid://dmihecs7ga5tf" path="res://GAME/Boss2/burbujas.gd" id="1_1wgc8"]
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_tptov"]
@@ -6,7 +6,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
 radius = 58.420887
 
-[node name="Burbujas" type="StaticBody2D" unique_id=2077077613]
+[node name="Burbujas" type="Area2D" unique_id=2077077613 groups=["enemy"]]
 script = ExtResource("1_1wgc8")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1678638727]
@@ -17,3 +17,5 @@ shape = SubResource("CircleShape2D_5sv2w")
 position = Vector2(-4.7683716e-07, 3)
 scale = Vector2(0.81640625, 0.81640625)
 texture = ExtResource("1_tptov")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

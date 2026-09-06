@@ -1,15 +1,25 @@
-[gd_scene format=3 uid="uid://ch6ehihn3ebbx"]
+[gd_scene load_steps=7 format=3 uid="uid://ch6ehihn3ebbx"]
 
 [ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_banr1"]
 [ext_resource type="Script" uid="uid://co8ndyj3u4gbg" path="res://GAME/Boss2/renacuajo.gd" id="1_norkw"]
+[ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="3_health"]
+[ext_resource type="Shader" path="res://GAME/VFX/hit_flash.gdshader" id="4_flash"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_flash"]
+resource_local_to_scene = true
+shader = ExtResource("4_flash")
+shader_parameter/blanco = 0.0
+shader_parameter/color_flash = Color(1, 1, 1, 1)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
-radius = 36.05551
+radius = 49.0
 
-[node name="StaticBody2D" type="StaticBody2D" unique_id=1623018016]
+[node name="Renacuajo" type="CharacterBody2D" unique_id=1623018016]
+collision_mask = 0
 script = ExtResource("1_norkw")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2122703804]
+material = SubResource("ShaderMaterial_flash")
 position = Vector2(0.1250031, -1.1250031)
 scale = Vector2(0.48242193, 0.48242193)
 texture = ExtResource("1_banr1")
@@ -17,7 +27,4 @@ texture = ExtResource("1_banr1")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1437101401]
 shape = SubResource("CircleShape2D_5sv2w")
 
-[node name="Timer" type="Timer" parent="." unique_id=185760883]
-wait_time = 7.0
-
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[node name="HealthComponent" parent="." unique_id=654470911 instance=ExtResource("3_health")]
