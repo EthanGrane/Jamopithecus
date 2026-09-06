@@ -11,6 +11,7 @@ var invulnerable : bool = false
 
 signal on_health_changed(current_health: int)
 
+
 func _ready() -> void:
 	current_health = max_health
 

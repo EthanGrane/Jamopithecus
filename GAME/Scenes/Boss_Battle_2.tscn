@@ -7,6 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://fbjgye8ct80e" path="res://GAME/Water/agua.tscn" id="4_rmext"]
 [ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="5_df78p"]
 [ext_resource type="PackedScene" path="res://GAME/Camera/camera_dolly.tscn" id="6_sfy6l"]
+[ext_resource type="AudioStream" uid="uid://dpqx8fcmytyxj" path="res://GAME/SFX/PlayerJump.mp3" id="7_cige2"]
+[ext_resource type="AudioStream" uid="uid://clrw2vgbhg6jb" path="res://GAME/SFX/PlayerWalkLoop.mp3" id="8_08sts"]
+[ext_resource type="AudioStream" uid="uid://xfrdo3wf2tx5" path="res://GAME/SFX/PlayerDash.wav" id="9_fhq2g"]
+[ext_resource type="AudioStream" uid="uid://bqmvc63060g4d" path="res://GAME/SFX/PlayerLand.mp3" id="10_yo5g8"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_df78p"]
 texture = ExtResource("3_rmext")
@@ -81,6 +85,9 @@ texture = ExtResource("3_rmext")
 physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_hbjp0")
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5sv2w"]
+size = Vector2(20, 170)
+
 [node name="Boss_2_fight" type="Node2D" unique_id=947395531 node_paths=PackedStringArray("boss", "pipes", "marcador_inicio", "marcador_fin")]
 script = ExtResource("1_cf3t6")
 boss = NodePath("Boss2")
@@ -146,7 +153,7 @@ sacudida_vertical = 6.0
 sacudida_rotacion = 3.0
 velocidad_del_temblor = 13.0
 
-[node name="Boss2" parent="." unique_id=1623018016 instance=ExtResource("3_hbjp0")]
+[node name="Boss2" parent="." unique_id=1623018016 groups=["Boss"] instance=ExtResource("3_hbjp0")]
 position = Vector2(-23, 598)
 collision_mask = 1
 velocidad_de_caida = 500.0
@@ -160,7 +167,39 @@ position = Vector2(1149, 610)
 [node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("5_df78p")]
 position = Vector2(536, 403)
 collision_layer = 2
+velocidad = 400.0
+aceleracion_suelo = 6000.0
+frenada_suelo = 6000.0
+aceleracion_aire = 3500.0
+frenada_aire = 1200.0
+altura_salto = 160.0
+tiempo_de_subida = 0.38
+tiempo_de_bajada = 0.3
+saltos_maximos = 1
+corte_de_salto = 0.45
+velocidad_maxima_de_caida = 1400.0
+velocidad_dash = 900.0
+duracion_dash = 0.18
+cooldown_dash = 0.35
+dashes_en_el_aire = 1
+buffer_de_dash = 0.12
+sonido_salto = ExtResource("7_cige2")
+sonido_pasos = ExtResource("8_08sts")
+sonido_dash = ExtResource("9_fhq2g")
+sonido_aterrizar = ExtResource("10_yo5g8")
+volumen_salto = 0.0
+volumen_pasos = -4.0
+volumen_dash = 0.0
+volumen_aterrizar = 0.0
+caida_minima_para_sonar = 220.0
+rango_de_volumen_al_caer = 9.0
+tono_min = 0.94
+tono_max = 1.06
+velocidad_minima_para_pasos = 30.0
 coyote_time = 0.2
+buffer_de_salto = 0.12
+gravedad_en_el_pico = 0.55
+margen_del_pico = 120.0
 
 [node name="Spear_marker_point" type="Node2D" parent="." unique_id=847705]
 
@@ -177,3 +216,11 @@ position = Vector2(919, 476)
 objetivo = NodePath("../Mosca")
 punto_a = Vector2(600, 300)
 punto_b = Vector2(600, 300)
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1892541128]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=665962084]
+position = Vector2(1183, 289)
+shape = SubResource("RectangleShape2D_5sv2w")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

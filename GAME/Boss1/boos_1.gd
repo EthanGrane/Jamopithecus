@@ -15,6 +15,7 @@ enum Estado {
 	HUYENDO,    # inmortal tras un golpe: corre a esconderse en una tubería
 }
 
+
 @export_group("Movimiento")
 @export var velocidad_min : float = 500.0
 @export var velocidad_max : float = 600.0

@@ -271,3 +271,8 @@ func _draw() -> void:
 	draw_polyline(puntos, color_ruta, 3.0)
 	draw_circle(a, 10.0, color_ruta)
 	draw_circle(b, 10.0, color_ruta)
+
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	if body is player:
+		get_tree().change_scene_to_file("res://GAME/Scenes/Boss_Battle_3.tscn")

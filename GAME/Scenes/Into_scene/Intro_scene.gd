@@ -31,7 +31,7 @@ func process_dialogue():
 		n_dialogue += 1
 		process_dialogue()
 	else:
-		get_tree().change_scene_to_file("res://GAME/Player/TEST.tscn")
+		get_tree().change_scene_to_file("res://GAME/Scenes/Escena_Inicial.tscn")
 func _input(event: InputEvent) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
-		get_tree().change_scene_to_file("res://GAME/Player/TEST.tscn")
+		get_tree().change_scene_to_file("res://GAME/Scenes/Escena_Inicial.tscn")

@@ -11,6 +11,34 @@ size = Vector2(166.5, 215.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hreux"]
 size = Vector2(169, 20)
 
+[sub_resource type="Animation" id="Animation_onsd8"]
+resource_name = "Mov_manos"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Mano:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.099999994, 0.43333334, 0.7, 1.0333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-146, 1), Vector2(-155, -4), Vector2(-142, -8), Vector2(-146, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Mano2:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.05, 0.43333334, 0.73333335, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(148, 2), Vector2(155, -2), Vector2(150, -14), Vector2(148, 2)]
+}
+
 [sub_resource type="Animation" id="Animation_m5sub"]
 length = 0.001
 tracks/0/type = "value"
@@ -36,6 +64,30 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Mano:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Mano2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(148, 2)]
 }
 
 [sub_resource type="Animation" id="Animation_meq13"]
@@ -97,6 +149,7 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_df6y5"]
 _data = {
+&"Mov_manos": SubResource("Animation_onsd8"),
 &"RESET": SubResource("Animation_m5sub"),
 &"Vuelta": SubResource("Animation_meq13"),
 &"default": SubResource("Animation_so0l5"),
@@ -137,25 +190,28 @@ libraries/ = SubResource("AnimationLibrary_df6y5")
 [node name="Mano" type="StaticBody2D" parent="." unique_id=572139235]
 
 [node name="Area2D" type="Area2D" parent="Mano" unique_id=1096637585]
+position = Vector2(-15, 70)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Mano/Area2D" unique_id=147165608]
-position = Vector2(184, 82)
+position = Vector2(0, 3)
 shape = SubResource("RectangleShape2D_vhxjs")
 
 [node name="Sprite2D" type="Sprite2D" parent="Mano" unique_id=1137071451]
-position = Vector2(186, 80)
+position = Vector2(-15, 74)
 scale = Vector2(1, 0.4960938)
 texture = ExtResource("2_meq13")
 
 [node name="Mano2" type="StaticBody2D" parent="." unique_id=70926647]
+position = Vector2(148, 2)
 
 [node name="Area2D" type="Area2D" parent="Mano2" unique_id=1723118307]
+position = Vector2(16, 70)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Mano2/Area2D" unique_id=1011711542]
-position = Vector2(-193, 76)
+position = Vector2(4, 6)
 shape = SubResource("RectangleShape2D_mjaej")
 
 [node name="Sprite2D" type="Sprite2D" parent="Mano2" unique_id=1595609737]
-position = Vector2(-195, 75)
+position = Vector2(18, 76)
 scale = Vector2(1, 0.4960938)
 texture = ExtResource("2_meq13")
