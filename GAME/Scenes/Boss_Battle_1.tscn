@@ -120,13 +120,14 @@ sources/0 = SubResource("TileSetAtlasSource_788jl")
 
 [sub_resource type="Resource" id="Resource_788jl"]
 script = ExtResource("7_788jl")
-posicion = Vector2(-1000, 300)
+posicion = Vector2(-798.48, 300)
 fov = 0.75
 metadata/_custom_type_script = "uid://cadogbi750bcf"
 
 [sub_resource type="Resource" id="Resource_rd6jl"]
 script = ExtResource("7_788jl")
 posicion = Vector2(-500, 300)
+fov = 0.75
 metadata/_custom_type_script = "uid://cadogbi750bcf"
 
 [sub_resource type="Resource" id="Resource_8arpv"]
@@ -165,6 +166,7 @@ tile_set = SubResource("TileSet_8arpv")
 position = Vector2(63, 429)
 rotation = 3.1415927
 scale = Vector2(1, -1)
+collision_mask = 7
 sacudida_vertical = 5.0
 sacudida_rotacion = 3.0
 velocidad_del_temblor = 16.0
@@ -205,7 +207,6 @@ tile_set = SubResource("TileSet_iiklh")
 
 [node name="Boos_1" parent="." unique_id=200607943 instance=ExtResource("2_13c7o")]
 position = Vector2(1369, 470)
-collision_mask = 1
 velocidad_min = 400.0
 velocidad_max = 500.0
 
