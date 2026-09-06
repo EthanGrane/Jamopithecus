@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://8wrn05fo5cht"]
+
+[ext_resource type="Script" uid="uid://d2lsv0jh0lwo8" path="res://GAME/Boss2/campana.gd" id="1_campana"]
+[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="2_icon"]
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_aewvb"]
+a = Vector2(0, -45)
+b = Vector2(0, 45)
+
+[node name="Campana" type="StaticBody2D" unique_id=149955917]
+script = ExtResource("1_campana")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1042675774]
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2_icon")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1615358532]
+shape = SubResource("SegmentShape2D_aewvb")

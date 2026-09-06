@@ -5,14 +5,16 @@
 ##	solo salta cuando él lo dice.
 ##
 ##	El bucle:
-##		PELIGRO → 2 de las 3 tuberías avisan temblando y luego
-##		          encienden su zona de muerte. La que no tiembla
-##		          es la segura, y NUNCA es la misma dos tandas
-##		          seguidas: el jugador está obligado a cruzar.
-##		          Se repite de 3 a 5 veces.
-##		SALTO   → el renacuajo cruza en arco: la ventana para atacarle
+##		GÉISERES → 2 de las 3 tuberías avisan temblando y luego
+##		           te lanzan hacia arriba. NO matan: son la forma
+##		           de moverte por la sala. La que no tiembla nunca
+##		           es la misma dos tandas seguidas.
+##		           A la vez que arranca el chorro, el renacuajo sale
+##		           del agua, te apunta y se lanza a por ti hasta
+##		           salirse de la pantalla. Tocarlo mata: se esquiva
+##		           dasheando, que te vuelve inmune.
 ##
-##	Dibuja el arco en el editor para que veas la ruta sin darle a play.
+##	Dibuja en el editor la franja de agua por la que puede emerger.
 ##
 
 @tool
@@ -23,7 +25,7 @@ extends Node2D
 @export var marcador_inicio : Marker2D
 @export var marcador_fin : Marker2D
 
-@export_group("Fase de peligro")
+@export_group("Fase de géiseres")
 @export var tuberias_por_tanda : int = 2
 @export var tandas_min : int = 3
 @export var tandas_max : int = 5
@@ -36,20 +38,17 @@ extends Node2D
 # llega colocado a donde pasa el arco del renacuajo
 @export var ultimo_ataque_lateral : bool = true
 
-@export_group("Fase de salto")
-# La ruta es la misma; lo que cambia es por qué punta la empieza
-@export_enum("Siempre A a B", "Alternar", "Aleatorio") var sentido : int = 1
-@export var altura_del_arco : float = 320.0
-@export var duracion_del_salto : float = 1.6
-@export var pausa_antes_del_salto : float = 0.9
-@export var pausa_despues : float = 1.0
+@export_group("Ataque del renacuajo")
+# Emerge por un punto aleatorio de la franja entre los dos
+# marcadores, así nunca sabes por dónde va a salir
+@export var ataca_cada_tanda : bool = true
+@export var retardo_del_ataque : float = 0.0   # respecto al chorro
 
 @export_group("Dibujo en el editor")
 @export var mostrar_ruta : bool = true
 @export var color_ruta : Color = Color(1.0, 0.55, 0.2)
 
 var activo : bool = true
-var toca_ida : bool = true   # para el modo Alternar
 var ultima_segura : PipeChorro = null   # para no repetir el patrón
 
 
@@ -58,10 +57,28 @@ func _ready() -> void:
 		return
 
 	if boss == null or marcador_inicio == null or marcador_fin == null:
-		push_error("Boss2Fight: faltan el boss o los marcadores del salto")
+		push_error("Boss2Fight: faltan el boss o los marcadores del agua")
 		return
 
+	limpiar_tuberias()
 	bucle()
+
+
+# Si Godot guarda la escena mientras el script de las tuberías tiene
+# un error, el array typeado se llena de nulls y todo revienta luego
+# con un "null instance". Los quitamos aquí y avisamos una sola vez
+func limpiar_tuberias() -> void:
+	var validas : Array[PipeChorro] = []
+
+	for t in pipes:
+		if t != null and is_instance_valid(t):
+			validas.append(t)
+
+	if validas.size() != pipes.size():
+		push_error("Boss2Fight: hay tuberías sin asignar en 'pipes'. " +
+				"Vuelve a arrastrarlas en el Inspector.")
+
+	pipes = validas
 
 
 func _process(_delta: float) -> void:
@@ -81,10 +98,7 @@ func _exit_tree() -> void:
 # Es una corutina: se lee de arriba abajo como el guion de la pelea
 func bucle() -> void:
 	while activo:
-		await fase_peligro()
-		if not activo:
-			return
-		await fase_salto()
+		await fase_geiseres()
 
 
 func esperar(segundos: float) -> void:
@@ -92,10 +106,10 @@ func esperar(segundos: float) -> void:
 
 
 # ---------------------------------------------------------------
-#  Fase 1: las tuberías
+#  Fase 1: los géiseres
 # ---------------------------------------------------------------
 
-func fase_peligro() -> void:
+func fase_geiseres() -> void:
 	var tandas := randi_range(tandas_min, tandas_max)
 
 	for i in tandas:
@@ -131,12 +145,18 @@ func fase_peligro() -> void:
 		if not activo:
 			return
 
-		# 2) Se enciende la zona de muerte y salen las burbujas
+		# 2) Se enciende el géiser y salen las burbujas
 		for tuberia in elegidas:
 			tuberia.activar_zona(true)
+
+		# 3) Y con las burbujas sale el renacuajo. Sin await: te
+		#    persigue mientras los chorros siguen activos
+		if ataca_cada_tanda:
+			lanzar_ataque()
+
 		await esperar(duracion_del_peligro)
 
-		# 3) Se apaga
+		# 4) Se apaga
 		for tuberia in elegidas:
 			tuberia.activar_zona(false)
 		await esperar(pausa_entre_tandas)
@@ -205,50 +225,29 @@ func apagar_todas() -> void:
 
 
 # ---------------------------------------------------------------
-#  Fase 2: el salto
+#  Fase 2: el ataque
 # ---------------------------------------------------------------
 
-func fase_salto() -> void:
-	await esperar(pausa_antes_del_salto)
-	if not activo or not is_instance_valid(boss):
+# Sin await: el renacuajo hace su ataque entero por su cuenta
+# mientras la fase de géiseres sigue su ritmo
+func lanzar_ataque() -> void:
+	if not is_instance_valid(boss):
 		return
 
-	# El arco es idéntico en los dos sentidos: solo cambia
-	# por qué extremo lo empieza
-	var desde := marcador_inicio.global_position
-	var hasta := marcador_fin.global_position
+	if retardo_del_ataque > 0.0:
+		await esperar(retardo_del_ataque)
+		if not activo or not is_instance_valid(boss):
+			return
 
-	if not siguiente_sentido():
-		var aux := desde
-		desde = hasta
-		hasta = aux
-
-	boss.saltar(desde, hasta, altura_del_arco, duracion_del_salto)
-
-	# El renacuajo avisa cuando ha terminado, tanto si completa
-	# el arco como si le has dado y se ha caído
-	await boss.salto_terminado
-
-	if not activo:
-		return
-	await esperar(pausa_despues)
+	boss.embestir_desde(punto_de_agua_aleatorio())
 
 
-# true = de A a B, false = de B a A
-func siguiente_sentido() -> bool:
-	match sentido:
-		0:  # Siempre A a B
-			return true
-		2:  # Aleatorio
-			return randf() < 0.5
-		_:  # Alternar: va y vuelve, como un pez de verdad
-			var este := toca_ida
-			toca_ida = not toca_ida
-			return este
+func punto_de_agua_aleatorio() -> Vector2:
+	return marcador_inicio.global_position.lerp(marcador_fin.global_position, randf())
 
 
 # ---------------------------------------------------------------
-#  Dibujo del arco en el editor
+#  Dibujo en el editor
 # ---------------------------------------------------------------
 
 func _draw() -> void:
@@ -259,15 +258,13 @@ func _draw() -> void:
 
 	var a := to_local(marcador_inicio.global_position)
 	var b := to_local(marcador_fin.global_position)
-	var medio := (a + b) * 0.5
-	medio.y -= altura_del_arco
 
-	# Muestreamos la misma curva que usa el renacuajo
-	var puntos : PackedVector2Array = []
-	for i in 33:
-		var t := float(i) / 32.0
-		puntos.append(a.lerp(medio, t).lerp(medio.lerp(b, t), t))
-
-	draw_polyline(puntos, color_ruta, 3.0)
+	# La franja de agua por la que puede emerger y hundirse
+	draw_line(a, b, color_ruta, 4.0)
 	draw_circle(a, 10.0, color_ruta)
 	draw_circle(b, 10.0, color_ruta)
+
+	# Una marca cada poco, para ver por dónde puede asomar
+	for i in 9:
+		var t := float(i) / 8.0
+		draw_circle(a.lerp(b, t), 5.0, color_ruta)

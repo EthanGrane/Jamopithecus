@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dkp3ldn8c3h6x"]
 
-[ext_resource type="Script" uid="uid://2r3qbobueclh" path="res://GAME/Player/PlayerAttack/spear.gd" id="1_spear"]
+[ext_resource type="Script" uid="uid://cyx476eblhjnn" path="res://GAME/Player/PlayerAttack/spear.gd" id="1_spear"]
 [ext_resource type="Texture2D" uid="uid://26k0sc2c5rtg" path="res://GAME/Player/Walker_sprite.png" id="2_ppbye"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ekbji"]
@@ -9,12 +9,13 @@ height = 34.0
 
 [node name="Spear" type="Area2D" unique_id=748100319 groups=["player_spear"]]
 scale = Vector2(2, 2)
-collision_layer = 3
+collision_mask = 5
 script = ExtResource("1_spear")
 gravedad_al_lanzar = 1200.0
 offset_en_mano = Vector2(-9, -3)
 angulo_en_mano = -60.0
 balanceo_amplitud = 0.5
+capas_de_impacto = 13
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1586144245]
 texture_filter = 1

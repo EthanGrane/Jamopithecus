@@ -270,6 +270,13 @@ func procesar_choque(body: Node2D) -> void:
 	if depurar:
 		print("[lanza] choca con ", body.name, " (capa ", body.collision_layer, ")")
 
+	# Cosas del escenario que reaccionan a la lanza: campanas, palancas.
+	# Cualquiera que tenga golpear() vale, no hace falta que sepamos qué es
+	if body.has_method("golpear"):
+		body.golpear()
+		salir_volando()   # rebota y se va a un spear_point
+		return
+
 	# "Es un enemigo" = tiene un HealthComponent, igual que en tu HitboxComponent
 	var health_component = body.get_node_or_null("HealthComponent")
 

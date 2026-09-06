@@ -3,25 +3,30 @@
 ##	La tubería del Boss2. Hereda de Pipe (de ahí saca el aviso que
 ##	tiembla y el estallido) y le añade el chorro.
 ##
-##	El peligro NO son las burbujas: es la ZonaDeMuerte, un Area2D
-##	que se enciende y se apaga. Las burbujas son solo el adorno
-##	que te dice que está encendida.
+##	La zona NO mata: es un trampolín. Al entrar te da un impulso
+##	seco hacia arriba, como un salto muy fuerte, y a partir de ahí
+##	caes con tu gravedad normal. Es una herramienta, no un peligro.
 ##
 
 @tool
 extends Pipe
 class_name PipeChorro
 
-@export_group("Zona de muerte")
+@export_group("Zona del géiser")
 @export var largo_de_la_zona : float = 420.0   # cuánto alcanza el chorro
 @export var ancho_de_la_zona : float = 110.0
+# El impulso que te pega al entrar, en la dirección de la tubería.
+# Es de una sola vez: entras, sales disparado y luego caes normal
+@export var impulso_del_geiser : float = 1300.0
 # Se dibuja en el editor para que puedas ajustarla viéndola
 @export var mostrar_zona : bool = true
-@export var color_zona : Color = Color(1.0, 0.25, 0.25, 0.22)
+@export var color_zona : Color = Color(0.35, 0.8, 1.0, 0.22)
 
 @onready var zona : Area2D = $ZonaDeMuerte
 @onready var zona_forma : CollisionShape2D = $ZonaDeMuerte/CollisionShape2D
 @onready var burbujas : CPUParticles2D = $ZonaDeMuerte/Burbujas
+
+var dentro : Array = []   # quién estaba dentro del géiser el frame anterior
 
 
 func _ready() -> void:
@@ -42,6 +47,35 @@ func _process(delta: float) -> void:
 		return
 
 	super._process(delta)   # el temblor del aviso
+
+
+# El empuje va en físicas, no en _process: estamos tocando la
+# velocidad de un CharacterBody2D
+func _physics_process(_delta: float) -> void:
+	if Engine.is_editor_hint() or not zona_activa():
+		return
+
+	empujar_al_jugador()
+
+
+# Impulso de una sola vez POR ENTRADA. Comparamos con quién había
+# dentro el frame anterior: los que acaban de entrar salen disparados,
+# los que ya estaban no se reimpulsan. Si empujáramos cada frame
+# sería un ascensor, no un trampolín
+func empujar_al_jugador() -> void:
+	for cuerpo in zona.get_overlapping_bodies():
+		print("BODY DETECTADO: ", cuerpo.name)
+
+		if cuerpo is player:
+			print("PLAYER DETECTADO")
+			var direccion := direccion_del_geiser()
+			print("DIRECCION: ", direccion)
+			cuerpo.empujar(direccion * impulso_del_geiser)
+
+# De la boca hacia el centro de la zona: esa es la dirección en la
+# que sopla, ya venga la tubería girada, escalada o espejada
+func direccion_del_geiser() -> Vector2:
+	return (to_global(centro_de_la_zona()) - to_global(boca_local())).normalized()
 
 
 # ---------------------------------------------------------------
@@ -71,6 +105,11 @@ func activar_zona(activa: bool) -> void:
 	# de físicas hace que Godot se queje
 	zona_forma.set_deferred("disabled", not activa)
 	burbujas.emitting = activa
+
+	# Al apagarse se olvida de quién había dentro, para que el
+	# siguiente chorro vuelva a impulsar a quien siga ahí
+	if not activa:
+		dentro.clear()
 
 	if activa:
 		estallar()

@@ -229,7 +229,12 @@ func _process(delta: float) -> void:
 radius = 34.234486
 
 [node name="Mosca" type="CharacterBody2D" unique_id=1289701118]
+collision_layer = 2
+collision_mask = 5
 script = ExtResource("1_28m6o")
+velocidad_dash = 750.0
+duracion_dash = 0.25
+margen_de_inmunidad = 0.1
 
 [node name="Sprite2D" type="AnimatedSprite2D" parent="." unique_id=215833921]
 texture_filter = 1
