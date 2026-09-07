@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cu0rbqgstbwlo"
+path="res://.godot/imported/Segundo Jefe.mp3-ca57c463469a90288ec4806ad6cea6e6.mp3str"
+
+[deps]
+
+source_file="res://Extras/Segundo Jefe.mp3"
+dest_files=["res://.godot/imported/Segundo Jefe.mp3-ca57c463469a90288ec4806ad6cea6e6.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

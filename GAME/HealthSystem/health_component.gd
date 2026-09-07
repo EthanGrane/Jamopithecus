@@ -25,6 +25,9 @@ func take_damage(amount : int) -> void:
 	current_health = clampi(current_health - amount, 0, max_health)	#clamp capa los valores, en este caso entre 0 y vida maxima
 	on_health_changed.emit(current_health)
 	if current_health <= 0:
+		if get_parent() is Boss3:
+			get_tree().change_scene_to_file("res://GAME/Scenes/final_bueno.tscn")
+			return
 		get_parent().queue_free()
 	print("Take Damage")
 	print(current_health)

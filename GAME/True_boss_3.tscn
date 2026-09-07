@@ -48,7 +48,7 @@ animations = [{
 "duration": 1.0,
 "texture": ExtResource("5_xynyf")
 }],
-"loop": 1,
+"loop": 0,
 "name": &"Hurt",
 "speed": 5.0
 }, {
@@ -95,8 +95,7 @@ shape = SubResource("CircleShape2D_5sv2w")
 position = Vector2(-2.9999962, 1)
 scale = Vector2(1.024, 1.024)
 sprite_frames = SubResource("SpriteFrames_5sv2w")
-animation = &"Hurt"
-frame_progress = 0.4986371
+animation = &"Run"
 
 [node name="HealthComponent" parent="." unique_id=654470910 instance=ExtResource("15_8dx0v")]
 position = Vector2(48, -35)

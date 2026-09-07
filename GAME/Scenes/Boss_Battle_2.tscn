@@ -247,7 +247,7 @@ shape = SubResource("RectangleShape2D_5sv2w")
 scale = Vector2(3, 3)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1379057051]
-position = Vector2(114.999985, -240.66669)
+position = Vector2(409.33334, 158.66667)
 shape = SubResource("RectangleShape2D_08sts")
 
 [node name="Door" parent="." unique_id=644828058 groups=["Door"] instance=ExtResource("12_08sts")]

@@ -1,5 +1,17 @@
 [gd_scene format=3 uid="uid://btf8nlhia4rob"]
 
+[ext_resource type="AudioStream" uid="uid://djsv3h84yrbqc" path="res://Extras/Final.mp3" id="1_cukdj"]
+[ext_resource type="Texture2D" uid="uid://b15o1o3fecw3o" path="res://Extras/Final.png" id="1_mx7vb"]
+[ext_resource type="FontFile" uid="uid://dj3dko4qnyq34" path="res://Extras/DTM-Mono.otf" id="2_cukdj"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_5sv2w"]
+font = ExtResource("2_cukdj")
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_1nq0e"]
+font = ExtResource("2_cukdj")
+font_size = 15
+
 [node name="Final_bueno" type="Control" unique_id=7688410]
 layout_mode = 3
 anchors_preset = 15
@@ -7,3 +19,37 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1395062142]
+stream = ExtResource("1_cukdj")
+volume_db = -5.0
+autoplay = true
+
+[node name="Final" type="Sprite2D" parent="." unique_id=1753443372]
+texture_filter = 1
+position = Vector2(577, 323)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("1_mx7vb")
+
+[node name="Label" type="Label" parent="." unique_id=1214423245]
+layout_mode = 0
+offset_left = 482.0
+offset_top = 320.0
+offset_right = 1070.0
+offset_bottom = 521.0
+text = "Walker se vengo, pero eso fue solo el inicio de la extincion de las RANAS"
+label_settings = SubResource("LabelSettings_5sv2w")
+autowrap_mode = 2
+
+[node name="Label2" type="Label" parent="." unique_id=1933051336]
+texture_filter = 1
+layout_mode = 0
+offset_left = 971.0
+offset_top = 23.0
+offset_right = 1147.0
+offset_bottom = 224.0
+text = "Programadores: Makelele, caye_2121
+Artista: IMPerio
+Musicos: Fefoide04, Pachio"
+label_settings = SubResource("LabelSettings_1nq0e")
+autowrap_mode = 2

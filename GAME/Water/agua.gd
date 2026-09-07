@@ -74,6 +74,6 @@ func restaurar_nivel(duracion: float = 2.0) -> void:
 
 
 func _on_area_2d_area_entered(area: Area2D) -> void:
-	GlobalMusic.play_music(preload("res://Extras/!!!jam jefe 2 wip.mp3"))
+	GlobalMusic.play_music(preload("res://Extras/Segundo Jefe.mp3"))
 	get_tree().change_scene_to_file("res://GAME/Scenes/Boss_Battle_2.tscn")
 	
