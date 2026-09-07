@@ -1,10 +1,89 @@
 [gd_scene format=3 uid="uid://pqpqhwnptgw7"]
 
 [ext_resource type="Script" uid="uid://hh187tawco88" path="res://GAME/true_boss_3.gd" id="1_fn6ae"]
-[ext_resource type="Texture2D" uid="uid://rria5cuqhsaq" path="res://icon.svg" id="1_vmgvf"]
+[ext_resource type="Texture2D" uid="uid://takr75l8f28b" path="res://Extras/Rana_Hurt/Rana_Hurt1.png" id="2_y4fp1"]
+[ext_resource type="Texture2D" uid="uid://4qixataj2c7v" path="res://Extras/Rana_Hurt/Rana_Hurt2.png" id="3_8dx0v"]
+[ext_resource type="Texture2D" uid="uid://03mjf4fpvrte" path="res://Extras/Rana_Hurt/Rana_Hurt3.png" id="4_t18kt"]
+[ext_resource type="Texture2D" uid="uid://b1e7pgv3fu616" path="res://Extras/Rana_Hurt/Rana_Hurt4.png" id="5_xynyf"]
+[ext_resource type="Texture2D" uid="uid://bbqwbc8iyisio" path="res://Extras/Rana_Run/Rana_Run1.png" id="6_t4q4x"]
+[ext_resource type="Texture2D" uid="uid://cr6sajsb34m2m" path="res://Extras/Rana_Run/Rana_Run2.png" id="7_q7aaa"]
+[ext_resource type="Texture2D" uid="uid://c4j6326sbyd53" path="res://Extras/Rana_Run/Rana_Run3.png" id="8_hleeo"]
+[ext_resource type="Texture2D" uid="uid://bgr1eydc78uof" path="res://Extras/Rana_Run/Rana_Run4.png" id="9_1d6ka"]
+[ext_resource type="Texture2D" uid="uid://cqu1pteliwlrl" path="res://Extras/Rana_Run/Rana_Run5.png" id="10_f47u7"]
+[ext_resource type="Texture2D" uid="uid://cu3wvf8vhlmat" path="res://Extras/Rana_Run/Rana_Run6.png" id="11_1ae6f"]
+[ext_resource type="Texture2D" uid="uid://c3t4c5y2kavbu" path="res://Extras/Rana_Run/Rana_Run7.png" id="12_ckwg4"]
+[ext_resource type="Texture2D" uid="uid://gef2w5440kra" path="res://Extras/Rana_Run/Rana_Run8.png" id="13_j4ooj"]
+[ext_resource type="Texture2D" uid="uid://mqbvg8dq55du" path="res://Extras/Rana_Run/Rana_Run9.png" id="14_sr064"]
+[ext_resource type="PackedScene" uid="uid://duwptbg5jvvch" path="res://GAME/HealthSystem/health_component.tscn" id="15_8dx0v"]
+[ext_resource type="PackedScene" path="res://GAME/VFX/hit_reaction_component.tscn" id="16_xynyf"]
+[ext_resource type="AudioStream" uid="uid://bsqy1lnvmf87w" path="res://GAME/SFX/Spear_HitFlesh.wav" id="17_t4q4x"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5sv2w"]
 radius = 80.00625
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5sv2w"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_y4fp1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_8dx0v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_t18kt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_xynyf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_y4fp1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_8dx0v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_t18kt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_xynyf")
+}],
+"loop": 1,
+"name": &"Hurt",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_t4q4x")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_q7aaa")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_hleeo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_1d6ka")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_f47u7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_1ae6f")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_ckwg4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_j4ooj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_sr064")
+}],
+"loop": 1,
+"name": &"Run",
+"speed": 5.0
+}]
 
 [node name="True_Boss_3" type="StaticBody2D" unique_id=156616406]
 script = ExtResource("1_fn6ae")
@@ -12,7 +91,16 @@ script = ExtResource("1_fn6ae")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=443001926]
 shape = SubResource("CircleShape2D_5sv2w")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1669262087]
-position = Vector2(0.6249969, 0.3750031)
-scale = Vector2(1.0683594, 1.0683594)
-texture = ExtResource("1_vmgvf")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1626800124]
+position = Vector2(-2.9999962, 1)
+scale = Vector2(1.024, 1.024)
+sprite_frames = SubResource("SpriteFrames_5sv2w")
+animation = &"Hurt"
+frame_progress = 0.4986371
+
+[node name="HealthComponent" parent="." unique_id=654470910 instance=ExtResource("15_8dx0v")]
+position = Vector2(48, -35)
+
+[node name="HitReactionComponent" parent="." unique_id=917376309 node_paths=PackedStringArray("sprite") instance=ExtResource("16_xynyf")]
+sprite = NodePath("../AnimatedSprite2D")
+sonido = ExtResource("17_t4q4x")

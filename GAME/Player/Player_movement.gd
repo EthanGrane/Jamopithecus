@@ -400,13 +400,7 @@ func _on_area_2d_area_entered(area: Area2D) -> void:
 		return
 
 	if area.is_in_group("Boss") or area.is_in_group("enemy"):
-		can_move = false
-		$Sprite2D.play("dead")
-		$Sprite2D.animation_finished.connect(func(): get_tree().reload_current_scene())
-		#get_tree().get_first_node_in_group("Vignette").fundido_a_negro(player.global_position)
-
-
-	print("mori")
+		morir()
 	
 
 
@@ -417,8 +411,9 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		return
 
 	if body.is_in_group("Boss") or body.is_in_group("enemy") or body is Boss1 or body is Boss2:
-		can_move = false
-		$Sprite2D.play("dead")
-		$Sprite2D.animation_finished.connect(func():
-			print("hola4")
-			get_tree().reload_current_scene())
+		morir()
+
+func morir():
+	can_move = false
+	$Sprite2D.play("dead")
+	$Sprite2D.animation_finished.connect(func(): get_tree().reload_current_scene())

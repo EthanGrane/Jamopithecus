@@ -18,6 +18,10 @@ func _ready() -> void:
 func take_damage(amount : int) -> void:
 	if invulnerable:
 		return
+	var padre := get_parent()
+	if padre and padre.has_method("damage"):
+		print("ahhhh")
+		padre.damage()
 	current_health = clampi(current_health - amount, 0, max_health)	#clamp capa los valores, en este caso entre 0 y vida maxima
 	on_health_changed.emit(current_health)
 	if current_health <= 0:
