@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://vuere3je4kte"]
+
+[ext_resource type="Script" uid="uid://6qceo8pxj1rf" path="res://GAME/Scenes/pause_menu.gd" id="1_es44c"]
+[ext_resource type="FontFile" uid="uid://d4g1yam3i0tcw" path="res://Extras/NESCyrillic.ttf" id="2_7nh4g"]
+
+[node name="PauseMenu" type="CanvasLayer" unique_id=604409200]
+process_mode = 3
+script = ExtResource("1_es44c")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=2021674769]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PanelContainer" unique_id=1074052367]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_fonts/font = ExtResource("2_7nh4g")
+theme_override_font_sizes/font_size = 64
+text = "Presiona \"esc\" para continuar"
