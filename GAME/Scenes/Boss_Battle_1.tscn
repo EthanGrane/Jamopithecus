@@ -11,6 +11,7 @@
 [ext_resource type="Shader" uid="uid://cjqixv7td7yxl" path="res://GAME/Vignette_Shader/Vignette.gdshader" id="10_5ih2n"]
 [ext_resource type="Script" uid="uid://cvq0iwmba7pnx" path="res://GAME/Vignette_Shader/vignette.gd" id="10_sbmxg"]
 [ext_resource type="PackedScene" uid="uid://du61ija3hdtfw" path="res://GAME/Platform/door.tscn" id="11_5ih2n"]
+[ext_resource type="PackedScene" uid="uid://vuere3je4kte" path="res://GAME/Scenes/pause_menu.tscn" id="12_gkgv4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8ptxo"]
 texture = ExtResource("2_8ptxo")
@@ -287,5 +288,8 @@ Door_position = Vector2(30, 0)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=2103034925]
 position = Vector2(1053, 341)
 shape = SubResource("RectangleShape2D_5sv2w")
+
+[node name="PauseMenu" parent="." unique_id=604409200 instance=ExtResource("12_gkgv4")]
+visible = false
 
 [connection signal="area_entered" from="Area2D" to="Agua" method="_on_area_2d_area_entered"]
