@@ -1,7 +1,7 @@
 extends Node2D
 
 var boss_start : bool = true
-var velocidad := 500.0
+var velocidad := 300.0
 func empezar():
 	boss_start = true
 

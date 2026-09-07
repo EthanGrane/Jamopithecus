@@ -391,3 +391,9 @@ func ser_escupido() -> void:
 	var tw := reaccion.crear_tween_de_sprite()
 	tw.tween_property(sprite, "scale", reaccion.escala_base, duracion_al_salir)\
 		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+func _exit_tree() -> void:
+	var puertas = get_tree().get_nodes_in_group("Door")
+	if puertas.size() > 0:
+		var door2 = puertas[0]
+		if door2.has_method("eliminate"):
+			door2.eliminate()

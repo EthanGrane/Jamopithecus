@@ -13,15 +13,23 @@
 [ext_resource type="Texture2D" uid="uid://o8b22t0cm47h" path="res://GAME/Player/Sprites/Walk/Walker_Walk4.png" id="5_u0eer"]
 [ext_resource type="Texture2D" uid="uid://bn3fv6edikp87" path="res://GAME/Player/Sprites/idle/Walker_Idle5.png" id="6_43i7g"]
 [ext_resource type="Texture2D" uid="uid://biu02q0p4slup" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump6.png" id="6_t21g8"]
+[ext_resource type="Texture2D" uid="uid://k1kwq2lv3y6j" path="res://GAME/Player/Sprites/Walker_Death/Walker_Death2.png" id="6_ydl46"]
 [ext_resource type="Texture2D" uid="uid://da72o5ilol0cx" path="res://GAME/Player/Sprites/idle/Walker_Idle6.png" id="7_fo13t"]
 [ext_resource type="Texture2D" uid="uid://bq8shysaj4qwn" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump7.png" id="7_j322u"]
+[ext_resource type="Texture2D" uid="uid://8014j05dcdis" path="res://GAME/Player/Sprites/Walker_Death/Walker_Death3.png" id="7_ut138"]
 [ext_resource type="Texture2D" uid="uid://c7fgmai4mldha" path="res://GAME/Player/Sprites/Walker_Jump/Walker_Jump8.png" id="8_okoi8"]
+[ext_resource type="Texture2D" uid="uid://chthj8xr470vk" path="res://GAME/Player/Sprites/Walker_Death/Walker_Death4.png" id="8_ub56y"]
 [ext_resource type="Texture2D" uid="uid://d4hu5vphp581l" path="res://GAME/Player/Sprites/idle/Walker_Idle7.png" id="8_vgnh7"]
+[ext_resource type="Texture2D" uid="uid://df26ey48baxca" path="res://GAME/Player/Sprites/Walker_Death/Walker_Death5.png" id="9_ialbx"]
 [ext_resource type="Texture2D" uid="uid://mn1mwlh78byv" path="res://GAME/Player/Sprites/idle/Walker_Idle8.png" id="9_u0eer"]
 [ext_resource type="Texture2D" uid="uid://dtefh0bmy6ttj" path="res://GAME/Player/Sprites/idle/Walker_Idle24.png" id="10_ogd5h"]
+[ext_resource type="Texture2D" uid="uid://33rdndogpb7g" path="res://GAME/Player/Sprites/Walker_Death/Walker_Death6.png" id="10_vmdan"]
+[ext_resource type="Texture2D" uid="uid://cfjx41a6q72ot" path="res://GAME/Player/Sprites/Walker_Death/Walker_Death7.png" id="11_pjcmj"]
 [ext_resource type="Texture2D" uid="uid://drd658mm8hrw1" path="res://GAME/Player/Sprites/idle/Walker_Idle9.png" id="11_w60d0"]
 [ext_resource type="Texture2D" uid="uid://di3sxts1dg7oq" path="res://GAME/Player/Sprites/idle/Walker_Idle10.png" id="12_ags12"]
+[ext_resource type="Texture2D" uid="uid://cu3iicsd2tkcy" path="res://GAME/Player/Sprites/Walker_Death/Walker_Death8.png" id="12_mgmuc"]
 [ext_resource type="Texture2D" uid="uid://bc13hxe358ldb" path="res://GAME/Player/Sprites/idle/Walker_Idle11.png" id="13_a1q3r"]
+[ext_resource type="Texture2D" uid="uid://j6ly6xiu4bh6" path="res://GAME/Player/Sprites/Walker_Death/Walker_Death9.png" id="13_vpdwx"]
 [ext_resource type="Texture2D" uid="uid://dwwrjsk52jbfc" path="res://GAME/Player/Sprites/idle/Walker_Idle12.png" id="14_wa5qq"]
 [ext_resource type="Texture2D" uid="uid://bvpcgwjuigpvr" path="res://GAME/Player/Sprites/idle/Walker_Idle13.png" id="15_2b0y3"]
 [ext_resource type="Texture2D" uid="uid://b31birq8y4k2u" path="res://GAME/Player/Sprites/idle/Walker_Idle14.png" id="16_mf0o7"]
@@ -64,6 +72,35 @@ animations = [{
 "loop": 1,
 "name": &"Walk",
 "speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_ydl46")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_ut138")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_ub56y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_ialbx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_vmdan")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_pjcmj")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_mgmuc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_vpdwx")
+}],
+"loop": 0,
+"name": &"dead",
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -241,7 +278,9 @@ texture_filter = 1
 position = Vector2(-1.0000038, 3.8146973e-06)
 scale = Vector2(1.8518522, 1.8518522)
 sprite_frames = SubResource("SpriteFrames_5sv2w")
-animation = &"jump"
+animation = &"dead"
+frame = 7
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1690552972]
 position = Vector2(0, 24)
@@ -259,3 +298,4 @@ script = ExtResource("3_throw")
 spear_scene = ExtResource("4_spear")
 
 [connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

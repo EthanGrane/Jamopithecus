@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cxcplfoals1lf"]
+
+[ext_resource type="Script" uid="uid://bhn782cec72b1" path="res://global_music.gd" id="1_icdws"]
+
+[sub_resource type="AudioStreamMP3" id="AudioStreamMP3_wh2uo"]
+loop = true
+
+[node name="Node2D" type="Node2D" unique_id=516631756]
+script = ExtResource("1_icdws")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1364898497]
+stream = SubResource("AudioStreamMP3_wh2uo")

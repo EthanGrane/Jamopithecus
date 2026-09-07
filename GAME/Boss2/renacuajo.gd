@@ -47,7 +47,7 @@ enum Estado {
 
 var estado : Estado = Estado.BAJO_EL_AGUA
 var salud : HealthComponent = null
-
+var vida_chafa := 4
 var punto_de_salida : Vector2 = Vector2.ZERO
 var punto_alto : Vector2 = Vector2.ZERO
 var avance : float = 0.0
@@ -301,5 +301,17 @@ func buscar_por_clase(nodo: Node) -> Node2D:
 	return null
 
 func play_hurt():
+	vida_chafa -= 1
 	$Sprite2D.play("Hurt")
-	$Sprite2D.animation_finished.connect(func(): $Sprite2D.play("default"))
+	$Sprite2D.animation_finished.connect(func():
+		if vida_chafa <= 0:
+			self.queue_free()
+		$Sprite2D.play("default"))
+
+
+func _exit_tree() -> void:
+	var puertas = get_tree().get_nodes_in_group("Door")
+	if puertas.size() > 0:
+		var door2 = puertas[0]
+		if door2.has_method("eliminate"):
+			door2.eliminate()

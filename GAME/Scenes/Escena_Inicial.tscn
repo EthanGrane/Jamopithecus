@@ -186,6 +186,12 @@ metadata/_edit_lock_ = true
 [node name="Mosca" parent="." unique_id=1289701118 instance=ExtResource("1_0x034")]
 position = Vector2(-2286, 705)
 
+[node name="_SpearsPoints" type="Node2D" parent="Mosca" unique_id=2073101631]
+position = Vector2(2286, -705)
+
+[node name="Marker2D4" type="Marker2D" parent="Mosca/_SpearsPoints" unique_id=1165821921 groups=["spear_points"]]
+position = Vector2(-2286, 706)
+
 [node name="CameraDolly" parent="." unique_id=1945044931 node_paths=PackedStringArray("objetivo") instance=ExtResource("4_48gcv")]
 position = Vector2(-2457, 259)
 objetivo = NodePath("../Mosca")
@@ -200,11 +206,6 @@ position = Vector2(1, 7)
 [node name="Door" parent="." unique_id=644828058 instance=ExtResource("5_coqwg")]
 z_index = -4
 position = Vector2(175, 242)
-
-[node name="_SpearsPoints" type="Node2D" parent="." unique_id=2073101631]
-
-[node name="Marker2D4" type="Marker2D" parent="_SpearsPoints" unique_id=1165821921 groups=["spear_points"]]
-position = Vector2(373, 719)
 
 [node name="Area2D" type="Area2D" parent="." unique_id=2047331243]
 position = Vector2(1823, 502.99997)
@@ -224,7 +225,7 @@ offset_right = 1905.0
 offset_bottom = 1085.0
 
 [node name="Control" parent="." unique_id=670822125 instance=ExtResource("9_scnww")]
-position = Vector2(-2475, 550)
+position = Vector2(-2567, 550)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1727467446]
 stream = ExtResource("10_bmpeg")

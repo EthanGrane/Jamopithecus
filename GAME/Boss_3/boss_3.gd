@@ -19,4 +19,3 @@ func volver_vuelta():
 
 func manos_giran(mano : StaticBody2D):
 	var tween := create_tween()
-	tween.tween_property(mano,position,)

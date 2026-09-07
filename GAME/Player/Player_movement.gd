@@ -71,7 +71,7 @@ var inmunidad_restante : float = 0.0
 var empuje_pendiente : Vector2 = Vector2.ZERO
 var hay_empuje : bool = false
 var pasos : AudioStreamPlayer2D = null
-
+var can_move := true
 # Sin control: sigue teniendo física, pero no lee los mandos.
 # Lo usan las intros de los boses y cualquier cinemática
 var bloqueado : bool = false
@@ -108,32 +108,33 @@ func _physics_process(delta: float) -> void:
 	# Hay que guardarlos ANTES de move_and_slide: al aterrizar, el
 	# motor pone la velocidad vertical a cero y ya no sabríamos
 	# si ha sido un saltito o una caída de veinte metros
-	var estaba_en_el_aire := not is_on_floor()
-	var caida := velocity.y
+	if can_move:
+		var estaba_en_el_aire := not is_on_floor()
+		var caida := velocity.y
 
-	if bloqueado:
-		# Ni salto ni dash ni mandos: solo se frena y le tira la
-		# gravedad, para que no se quede flotando en el aire
-		frenar_y_caer(delta)
-	else:
-		actualizar_ayudas(delta)
-		actualizar_dash(delta)
-
-		if dasheando:
-			# Durante el dash: línea recta, ni gravedad ni control.
-			# El dash gana a cualquier empuje externo
-			velocity = Vector2(direccion_dash * velocidad_dash, 0.0)
-			hay_empuje = false
+		if bloqueado:
+			# Ni salto ni dash ni mandos: solo se frena y le tira la
+			# gravedad, para que no se quede flotando en el aire
+			frenar_y_caer(delta)
 		else:
-			gestionar_salto()
-			aplicar_gravedad(delta)
-			mover_en_horizontal(delta)
-			aplicar_empuje()
+			actualizar_ayudas(delta)
+			actualizar_dash(delta)
 
-	player_animation()
-	move_and_slide()
-	comprobar_aterrizaje(estaba_en_el_aire, caida)
-	actualizar_pasos()
+			if dasheando:
+				# Durante el dash: línea recta, ni gravedad ni control.
+				# El dash gana a cualquier empuje externo
+				velocity = Vector2(direccion_dash * velocidad_dash, 0.0)
+				hay_empuje = false
+			else:
+				gestionar_salto()
+				aplicar_gravedad(delta)
+				mover_en_horizontal(delta)
+				aplicar_empuje()
+
+		player_animation()
+		move_and_slide()
+		comprobar_aterrizaje(estaba_en_el_aire, caida)
+		actualizar_pasos()
 
 
 # ---------------------------------------------------------------
@@ -394,12 +395,30 @@ func decoy():
 
 
 func _on_area_2d_area_entered(area: Area2D) -> void:
-	if not area.is_in_group("enemy"):
+	if es_inmune():
+		print("es inmune")
 		return
 
-	# Dashear te atraviesa el peligro
-	if es_inmune():
-		return
+	if area.is_in_group("Boss") or area.is_in_group("enemy"):
+		can_move = false
+		$Sprite2D.play("dead")
+		$Sprite2D.animation_finished.connect(func(): get_tree().reload_current_scene())
+		#get_tree().get_first_node_in_group("Vignette").fundido_a_negro(player.global_position)
+
 
 	print("mori")
-	get_tree().get_first_node_in_group("Vignette").fundido_a_negro(player.global_position)
+	
+
+
+func _on_area_2d_body_entered(body: Node2D) -> void:
+	print("hola")
+	if es_inmune():
+		print("es inmune")
+		return
+
+	if body.is_in_group("Boss") or body.is_in_group("enemy") or body is Boss1 or body is Boss2:
+		can_move = false
+		$Sprite2D.play("dead")
+		$Sprite2D.animation_finished.connect(func():
+			print("hola4")
+			get_tree().reload_current_scene())

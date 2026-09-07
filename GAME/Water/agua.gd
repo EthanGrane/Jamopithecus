@@ -71,3 +71,9 @@ func cambiar_nivel(desplazamiento: float, duracion: float = 2.0) -> void:
 # Vuelve al nivel de partida
 func restaurar_nivel(duracion: float = 2.0) -> void:
 	cambiar_nivel(0.0, duracion)
+
+
+func _on_area_2d_area_entered(area: Area2D) -> void:
+	GlobalMusic.play_music(preload("res://Extras/!!!jam jefe 2 wip.mp3"))
+	get_tree().change_scene_to_file("res://GAME/Scenes/Boss_Battle_2.tscn")
+	

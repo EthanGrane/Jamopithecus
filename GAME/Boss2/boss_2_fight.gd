@@ -297,3 +297,8 @@ func _draw() -> void:
 	for i in 9:
 		var t := float(i) / 8.0
 		draw_circle(a.lerp(b, t), 5.0, color_ruta)
+
+
+func _on_area_2d_area_entered(area: Area2D) -> void:
+	GlobalMusic.play_music(preload("res://Extras/Energico epico.mp3"))
+	get_tree().change_scene_to_file("res://GAME/Scenes/Boss_3_scene.tscn")

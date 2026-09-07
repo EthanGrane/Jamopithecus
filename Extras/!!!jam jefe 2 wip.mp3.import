@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bqbjt5rhtaci1"
+path="res://.godot/imported/!!!jam jefe 2 wip.mp3-849ef65e477397e2e0a9b42a7556d452.mp3str"
+
+[deps]
+
+source_file="res://Extras/!!!jam jefe 2 wip.mp3"
+dest_files=["res://.godot/imported/!!!jam jefe 2 wip.mp3-849ef65e477397e2e0a9b42a7556d452.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

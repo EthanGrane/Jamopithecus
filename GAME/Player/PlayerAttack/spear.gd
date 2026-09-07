@@ -102,9 +102,13 @@ func _physics_process(delta: float) -> void:
 	match estado:
 
 		Estado.EN_MANO:
+			if self.is_in_group("player_spear"):
+				remove_from_group("player_spear")
 			estar_en_la_mano(delta)
 
 		Estado.VOLANDO:
+			if not self.is_in_group("player_spear"):
+				add_to_group("player_spear")
 			# Red de seguridad: si lleva demasiado volando es que se ha
 			# ido del mapa y nunca va a chocar con nada
 			contador_de_vuelo += delta
@@ -395,3 +399,7 @@ func elegir_punto_aleatorio() -> Vector2:
 
 	var elegido = buenos[randi() % buenos.size()]
 	return elegido.global_position
+
+func _input(event: InputEvent) -> void:
+	if Input.is_action_just_pressed("R"):
+		get_tree().reload_current_scene()
