@@ -12,6 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://bsqy1lnvmf87w" path="res://GAME/SFX/Spear_HitFlesh.wav" id="7_a5eei"]
 [ext_resource type="PackedScene" uid="uid://k005808lh4vg" path="res://GAME/Player/Player.tscn" id="9_32cgi"]
 [ext_resource type="PackedScene" uid="uid://q3uplb1bqp3f" path="res://GAME/BossIntro/boss_intro.tscn" id="12_r818k"]
+[ext_resource type="PackedScene" uid="uid://vuere3je4kte" path="res://GAME/Scenes/pause_menu.tscn" id="13_hwv71"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_gidqs"]
 texture = ExtResource("1_wsnav")
@@ -267,6 +268,9 @@ retardo = 0.5
 duracion_ida = 1.0
 espera_mirando = 1.0
 duracion_vuelta = 1.0
+
+[node name="PauseMenu" parent="." unique_id=604409200 instance=ExtResource("13_hwv71")]
+visible = false
 
 [connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
 [connection signal="body_entered" from="Area2D2" to="." method="_on_area_2d_2_body_entered"]
